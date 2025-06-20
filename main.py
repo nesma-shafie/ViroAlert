@@ -1,25 +1,19 @@
 import numpy as np
 import fastapi
 import os
-from fastapi import File,UploadFile,Query
+from fastapi import File,UploadFile,Form
 from fastapi.middleware.cors import CORSMiddleware
 import torch
 from gensim.models import FastText
 from model import GatedAttention,DrugTargetGNN
 import esm
-from esm.pretrained import load_model_and_alphabet_core
-
-from torch.serialization import add_safe_globals
-from utils import read_data_from_file,test_one_virus, test_antivirus
+from typing import Optional
+from utils import read_virus,read_virus_seqs,test_one_virus, test_antivirus
 import argparse
-from torch.serialization import add_safe_globals
-
-# Allow safe unpickling of argparse.Namespace
-# add_safe_globals([argparse.Namespace])
+torch.serialization.add_safe_globals([argparse.Namespace])
 
 
 # CONSTANTS
-UPLOAD_DIR = "tmp"
 SG_EMBEDD_SIZE=30
 SG_WINDOW=5
 # Transformer Parameters
@@ -34,9 +28,8 @@ model.load_state_dict(torch.load(r"models\model_weights.pth", map_location=devic
 ft_model = FastText.load(r"models\ft_skipgram.model")
 antivirus_model = DrugTargetGNN()
 antivirus_model.load_state_dict(torch.load(r"models\drug_target_model.pth", map_location=device))
-model_data = torch.load(r"models\esm1b_t33_650M_UR50S.pt", map_location="cpu")
-# esm_model, esm_alphabet = load_model_and_alphabet_core(model_data)
-# esm_model.eval()
+esm_model, esm_alphabet=esm.pretrained.load_model_and_alphabet_local(r"models\esm1b_t33_650M_UR50S.pt")
+esm_model.eval()
 
 
 app = fastapi.FastAPI()
@@ -51,14 +44,10 @@ app.add_middleware(
 
 @app.post("/predict-host")
 async def predict_host(file: UploadFile=File(...)):
-    os.makedirs(UPLOAD_DIR, exist_ok=True)  # create if not exists
-    temp_path = os.path.join(UPLOAD_DIR, file.filename)
-    with open(temp_path, "wb") as f:
-        f.write(await file.read())
     
-
+    content = (await file.read()).decode()
     # Read the virus data
-    virus = read_data_from_file(temp_path)
+    virus = read_virus_seqs(content)
 
     ids_original = virus["Virus_ID"]
     datas = virus["Sequence"]
@@ -75,11 +64,20 @@ async def predict_host(file: UploadFile=File(...)):
         "prediction": Y_hat.tolist()[0],
         "probability": Y_prob.tolist()[0],
     }
-# @app.post("/predict-antivirus")
-# async def predict_antivirus(virus: str = Query(...), smiles: str = Query(...)):
-#     # Predict using the test_antivirus function
-#     pIC50 = test_antivirus(antivirus_model, esm_model, esm_alphabet, virus, smiles)
-    
-#     return {
-#         "pIC50": pIC50
-#     }
+@app.post("/predict-antivirus")
+async def predict_antivirus(
+    file: Optional[UploadFile] = File(None),
+    virus: Optional[str] = Form(None),
+    smiles: Optional[str] = Form(...)
+):
+    # Case 1: File is uploaded (FASTA)
+    if file:
+        content = (await file.read()).decode()
+        virus_seq = read_virus(content)
+    # Case 2: Use virus sequence from form field
+    elif virus:
+        virus_seq = virus
+    pIC50 = test_antivirus(antivirus_model, esm_model, esm_alphabet, virus_seq, smiles)
+    return {
+        "pIC50": pIC50.item(),
+    }

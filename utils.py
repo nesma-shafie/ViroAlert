@@ -3,6 +3,7 @@ import os
 import pandas as pd
 from Bio import SeqIO
 import torch
+from io import StringIO
 import numpy as np
 from rdkit import Chem
 import esm
@@ -13,19 +14,20 @@ l_sub=10
 N=193
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+def read_virus(fasta_content) :
+    lines = fasta_content.strip().splitlines()
+    return ''.join(line.strip() for line in lines if not line.startswith(">"))
 
-
-def read_data_from_file(filename):
-
+def read_virus_seqs(fasta_content):
+    handle = StringIO(fasta_content)
     
-    file_path = os.path.abspath(filename)  # Ensure absolute path
-    # Read and store data directly from the generator
+    records = list(SeqIO.parse(handle, "fasta"))
     df = pd.DataFrame.from_records([
         {
             "ID": "|".join(record.description.split("|")[0:]),
-            "Sequence": str(record.seq),  # Extract sequence
+            "Sequence": str(record.seq),
         }
-        for record in SeqIO.parse(file_path, "fasta")
+        for record in records
     ])
     df["Virus_ID"] = df["ID"].apply(lambda x: "".join(x.split("|")[1:]) if "|" in x else "")
     df["Seq_ID"] = df["ID"].apply(lambda x: x.split("|")[0] if "|" in x else "")
@@ -145,7 +147,6 @@ def esm_model_func(model,alphabet,seq):
     
     contact_map = results["contacts"]  # Shape: [1, L, L]
     
-   
     return contact_map
 
 def protein_graph(model, alphabet, seq, threshold=0.5, window_size=1000, stride=500):
@@ -164,7 +165,6 @@ def protein_graph(model, alphabet, seq, threshold=0.5, window_size=1000, stride=
     for start_idx, subseq in windows:
         contact_map = esm_model_func(model, alphabet, subseq)[0]  # shape: [L_window, L_window]
         L_win = len(subseq)
-
         for i in range(L_win):
             for j in range(L_win):
                 prob = contact_map[i, j].item()
@@ -207,5 +207,4 @@ def test_antivirus(model,esm_model,esm_alphabet,virus,smiles):
     model.eval()
     with torch.no_grad():
         output = model(virus_graph, drug_graph)
-
     return output

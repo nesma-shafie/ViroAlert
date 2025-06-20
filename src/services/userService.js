@@ -93,20 +93,6 @@ const generateToken = async (userId) => {
   return token;
 };
 
-const checkToken = async (token) => {
-  const userToken = await prisma.WebTokens.findFirst({
-    where: { token },
-  });
-  return userToken;
-};
-
-const removeToken = async (token) => {
-  const deletedToken = await prisma.webTokens.deleteMany({
-    where: { token: token },
-  });
-  return deletedToken;
-};
-
 export {
   getUsersCountByEmailUsername,
   createNewUser,
@@ -114,6 +100,4 @@ export {
   getUserBasicInfoByUsername,
   getUserPassword,
   generateToken,
-  removeToken,
-  checkToken,
 };

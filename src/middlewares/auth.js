@@ -1,53 +1,52 @@
-import jwt from "jsonwebtoken";
-import { getUserBasicInfoByUUID, checkToken } from "../services/userService.js";
+import jwt from 'jsonwebtoken';
+import userService from '../services/userService.js';
+import { checkIfTokenIsActive } from '../services/authService.js';
 
 const auth = async (req, res, next) => {
     let token = null;
-   
-  if (req.header("Authorization")) {
-    token = req.header("Authorization").replace("Bearer ", "");
-  } else {
-    return res
-      .status(401)
-      .json({ status: "fail", message: "no token provided" });
-  }
 
-  if (!token) {
-    return next(new AppError("no token provided", 401));
-  }
+    // Extract token from Authorization header
+    if (req.header('Authorization')) {
+        token = req.header('Authorization').replace('Bearer ', '');
+    }
 
-  
-  let decode = null;
-  try {
-    decode = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (error) {
-    return res.status(401).json({
-      status: "fail",
-      message: "token not valid 11",
-    });
-  }
-  // 1) get user id
-  const userId = decode.id;
-  // 2) check user existance
-  const user = await getUserBasicInfoByUUID(userId);
+    if (!token) {
+        return res.status(401).json({
+            status: 'fail',
+            message: 'No token provided',
+        });
+    }
 
-  if (!user)
-    return res.status(404).json({
-      status: "fail",
-      message: "no user found",
-    });
+    let decode;
+    try {
+        decode = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+        return res.status(401).json({
+            status: 'fail',
+            message: 'Token not valid',
+        });
+    }
 
-  token = checkToken(token);
-  if (!token) {
-    return res.status(401).json({
-      status: "fail",
-      message: "token not valid 222",
-    });
-  }
+    const userId = JSON.parse(decode.id);
+    const user = await userService.getUserAllDetailsById(userId);
 
-  req.user = user;
-  req.token = token;
-  next();
+    if (!user) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No user found',
+        });
+    }
+
+    const isActive = await checkIfTokenIsActive(token);
+    if (!isActive) {
+        return res.status(401).json({
+            status: 'fail',
+            message: 'Token is no longer active',
+        });
+    }
+
+    req.user = user;
+    next();
 };
 
-export { auth };
+export  {auth};

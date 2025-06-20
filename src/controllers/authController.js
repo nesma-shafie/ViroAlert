@@ -6,7 +6,6 @@ import {
   getUsersCountByEmailUsername,
   getUserBasicInfoByUsername,
   getUserPassword,
-  removeToken,
 } from "../services/userService.js";
 
 const signup = async (req, res, next) => {
@@ -55,14 +54,8 @@ const login = async (req, res, next) => {
       message: "wrong password",
     });
   }
-  const token = generateToken(user.id);
+  const token = await generateToken(user.id);
   return res.status(200).send({ data: { user, token }, status: "success" });
 };
 
-const logout = async (req, res, next) => {
-  const token = req.header("Authorization").replace("Bearer ", "");
-  await removeToken(req.token);
-  return res.status(200).send({ status: "success" });
-};
-
-export { signup, login, logout };
+export { signup, login };

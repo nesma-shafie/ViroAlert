@@ -4,6 +4,7 @@ import express from "express";
 // import swaggerUi from "swagger-ui-express";
 
 import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 // config swagger
 // const swaggerSpecs = swaggerJsdoc(swaggerConfig);
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // our main routes
 app.use("/ViroGen/app/auth", authRouter);
+app.use("/ViroGen/app/user", userRouter);
 
 // handle all other routes
 app.all("*", (req, res) => {

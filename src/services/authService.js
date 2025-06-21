@@ -1,13 +1,11 @@
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
+import prisma from '../prisma.js';
 
-const prisma = new PrismaClient();
-export default prisma;
-
-export const checkIfTokenIsActive = async (token) => {
-    const tokenRecord = await prisma.webTokens.findUnique({
+const checkIfTokenIsActive = async (token) => {
+    const tokenRecord = await prisma.webTokens.findFirst({
         where: { token },
     });
 
     return !!tokenRecord;
 };
+
+export { checkIfTokenIsActive };

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
-import path from 'path';
 
 const predictHost = async (req, res) => {
     const filePath = req.file.path;  // assuming multer stores it here

@@ -2,11 +2,8 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET; // Use .env for production
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN; // Or '1h', '30m', etc.
 
-import pkg from "@prisma/client";
-const { PrismaClient } = pkg;
+import prisma from '../prisma.js';
 
-const prisma = new PrismaClient();
-export default prisma;
 
 /**
  * Get count of users that match either the email or username

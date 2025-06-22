@@ -48,5 +48,33 @@ const predictAntivirus = async (req, res) => {
     });
   }
 
+  const topAntivirus = async (req, res) => {
+    const form = new FormData();
 
-export  {predictHost, predictAntivirus};
+    // If FASTA file is uploaded
+    if (req.file) {
+      const filePath = req.file.path;
+      const fileName = req.file.originalname;
+
+      form.append('file', fs.createReadStream(filePath), fileName);
+    }
+
+    // If virus sequence is provided manually (and not file)
+    if (!req.file && req.body.virus) {
+      form.append('virus', req.body.virus);
+    }
+
+
+
+    const fastapiResponse = await axios.post('http://localhost:8000/top-antivirus', form, {
+      headers: form.getHeaders(),
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: fastapiResponse.data,
+    });
+  }
+
+
+export  {predictHost, predictAntivirus ,topAntivirus};

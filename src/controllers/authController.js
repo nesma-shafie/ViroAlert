@@ -56,7 +56,7 @@ const login = async (req, res, next) => {
       message: "wrong password",
     });
   }
-  const token = generateToken(user.id);
+  const token =await  generateToken(user.id);
   return res.status(200).send({ data: { user, token }, status: "success" });
 };
 

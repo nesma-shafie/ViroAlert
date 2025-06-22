@@ -8,4 +8,12 @@ const checkIfTokenIsActive = async (token) => {
     return !!tokenRecord;
 };
 
-export { checkIfTokenIsActive };
+const removeToken = async (token) => {
+  const deletedToken = await prisma.webTokens.deleteMany({
+    where: { token: token },
+  });
+  return deletedToken;
+};
+
+
+export { checkIfTokenIsActive ,removeToken};

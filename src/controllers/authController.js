@@ -8,6 +8,8 @@ import {
   getUserPassword,
 } from "../services/userService.js";
 
+import {removeToken} from "../services/authService.js";
+
 const signup = async (req, res, next) => {
   const { email, name, password, username } = req.body;
   // 1) check if the username, email is valid
@@ -54,8 +56,14 @@ const login = async (req, res, next) => {
       message: "wrong password",
     });
   }
-  const token = await generateToken(user.id);
+  const token = generateToken(user.id);
   return res.status(200).send({ data: { user, token }, status: "success" });
 };
 
-export { signup, login };
+const logout = async (req, res, next) => {
+  const token = req.header("Authorization").replace("Bearer ", "");
+  await removeToken(req.token);
+  return res.status(200).send({ status: "success" });
+};
+
+export { signup, login, logout };

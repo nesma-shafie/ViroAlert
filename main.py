@@ -1,6 +1,6 @@
 import numpy as np
 import fastapi
-import os
+import pandas as pd
 from fastapi import File,UploadFile,Form
 from fastapi.middleware.cors import CORSMiddleware
 import torch
@@ -8,7 +8,8 @@ from gensim.models import FastText
 from model import GatedAttention,DrugTargetGNN
 import esm
 from typing import Optional
-from utils import read_virus,read_virus_seqs,test_one_virus, test_antivirus
+import pickle
+from utils import read_virus,read_virus_seqs,test_one_virus,test_antivirus,test_top_antivirus
 import argparse
 torch.serialization.add_safe_globals([argparse.Namespace])
 
@@ -30,6 +31,7 @@ antivirus_model = DrugTargetGNN()
 antivirus_model.load_state_dict(torch.load(r"models\drug_target_model.pth", map_location=device))
 esm_model, esm_alphabet=esm.pretrained.load_model_and_alphabet_local(r"models\esm1b_t33_650M_UR50S.pt")
 esm_model.eval()
+
 
 
 app = fastapi.FastAPI()
@@ -80,4 +82,21 @@ async def predict_antivirus(
     pIC50 = test_antivirus(antivirus_model, esm_model, esm_alphabet, virus_seq, smiles)
     return {
         "pIC50": pIC50.item(),
+    }
+
+@app.post("/top-antivirus")
+async def top_antivirus(
+    file: Optional[UploadFile] = File(None),
+    virus: Optional[str] = Form(None),
+):
+    # Case 1: File is uploaded (FASTA)
+    if file:
+        content = (await file.read()).decode()
+        virus_seq = read_virus(content)
+    # Case 2: Use virus sequence from form field
+    elif virus:
+        virus_seq = virus
+    top_smiles = test_top_antivirus(antivirus_model, esm_model, esm_alphabet, virus_seq)
+    return {
+        "top_smiles": top_smiles,
     }

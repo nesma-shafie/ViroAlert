@@ -1,5 +1,4 @@
 
-import os
 import pandas as pd
 from Bio import SeqIO
 import torch
@@ -7,7 +6,9 @@ from io import StringIO
 import numpy as np
 from rdkit import Chem
 import esm
-from torch_geometric.data import Data
+from torch.utils.data import DataLoader
+import pickle
+from model import custom_collate,DrugProteinDataset,protein_graph_to_data,drug_graph_to_data
 
 # Constants
 l_sub=10
@@ -177,25 +178,6 @@ def protein_graph(model, alphabet, seq, threshold=0.5, window_size=1000, stride=
 
     return node_features, edge_index, edge_attr
 
-def protein_graph_to_data(protein_graph):
-    node_features,edge_index,edge_attr = protein_graph
-    x = node_features
-    
-    edge_index = torch.tensor(edge_index, dtype=torch.long).t().contiguous()  # [2, num_edges]
-    edge_attr = torch.tensor(edge_attr, dtype=torch.float).unsqueeze(1)  # [num_edges, 1]
-    
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-    return data
-
-def drug_graph_to_data(drug_graph):
-    mol_size, nodes, edges, edges_type = drug_graph
-    x = torch.tensor(nodes, dtype=torch.float)  # [num_nodes, node_features]
-    
-    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()  # [2, num_edges]
-    edge_attr = torch.tensor(edges_type, dtype=torch.float).unsqueeze(1)  # [num_edges, 1]
-    
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
-    return data
 
 def test_antivirus(model,esm_model,esm_alphabet,virus,smiles):
     virus_graph=protein_graph(esm_model,esm_alphabet,virus)
@@ -208,3 +190,27 @@ def test_antivirus(model,esm_model,esm_alphabet,virus,smiles):
     with torch.no_grad():
         output = model(virus_graph, drug_graph)
     return output
+
+def test_top_antivirus(model,esm_model,esm_alphabet,virus):
+    with open(r"data\drug_graphs.pkl", "rb") as f:
+        drug_graphs = pickle.load(f)
+    drugs=pd.read_csv(r"data\drugs.csv")
+    drugs = drugs['SMILES'].tolist()
+
+    virus_graph = protein_graph(esm_model, esm_alphabet, virus)
+    virus_graph = [virus_graph] * len(drug_graphs)
+    dataset= DrugProteinDataset(virus_graph, drug_graphs)
+    loader=DataLoader(dataset, batch_size=64, collate_fn=custom_collate)
+    model.eval()
+    outputs=[]
+    for protein_graphs, drug_graphs in loader:
+            protein_graphs = protein_graphs.to(device)
+            drug_graphs = drug_graphs.to(device)
+            with torch.no_grad():
+                output = model(protein_graphs, drug_graphs)
+            outputs.extend(output.cpu().detach().numpy())
+    outputs = np.array(outputs)
+    top5_indices = outputs.argsort()[::-1][:5]  # Descending order
+    top5_smiles = [drugs[i] for i in top5_indices]
+
+    return top5_smiles

@@ -5,6 +5,8 @@ import torch.nn.functional as F
 import numpy as np
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from torch_geometric.nn import global_mean_pool
+from torch_geometric.data import Batch
+from torch_geometric.data import Data
 
 
 
@@ -132,6 +134,50 @@ class GatedAttention(nn.Module):
         Y_prob = self.classifier(output2)  # Shape: [batch_size, 1]
         Y_hat = torch.ge(Y_prob, 0.5).float()  # Convert probabilities to binary predictions
         return Y_prob, Y_hat, A_vec_all, A_vec_2_all
+    
+def custom_collate(batch):
+    protein_graphs = ([item[0] for item in batch])  
+    drug_graphs = [item[1] for item in batch]                 
+
+    batch_protein_graphs = Batch.from_data_list(protein_graphs)     # Combine graphs into a single batched graph
+    batch_drug_graphs = Batch.from_data_list(drug_graphs)     # Combine graphs into a single batched graph
+
+    return batch_protein_graphs, batch_drug_graphs
+
+def protein_graph_to_data(protein_graph):
+    node_features,edge_index,edge_attr = protein_graph
+    x = node_features
+    
+    edge_index = torch.tensor(edge_index, dtype=torch.long).t().contiguous()  # [2, num_edges]
+    edge_attr = torch.tensor(edge_attr, dtype=torch.float).unsqueeze(1)  # [num_edges, 1]
+    
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    return data
+
+def drug_graph_to_data(drug_graph):
+    mol_size, nodes, edges, edges_type = drug_graph
+    x = torch.tensor(nodes, dtype=torch.float)  # [num_nodes, node_features]
+    
+    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()  # [2, num_edges]
+    edge_attr = torch.tensor(edges_type, dtype=torch.float).unsqueeze(1)  # [num_edges, 1]
+    
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    return data
+    
+class DrugProteinDataset(torch.utils.data.Dataset):
+    def __init__(self, protein_graphs, drug_graphs):
+        self.protein_graphs = protein_graphs
+        self.drug_graphs = drug_graphs
+    
+    def __len__(self):
+        return len(self.drug_graphs)
+    
+    def __getitem__(self, idx):
+        protein_graphs = protein_graph_to_data(self.protein_graphs[idx])
+        drug_graph = drug_graph_to_data(self.drug_graphs[idx])
+        return protein_graphs, drug_graph
+
+
     
 class GCNConv(nn.Module):
     def __init__(self, in_channels, out_channels):

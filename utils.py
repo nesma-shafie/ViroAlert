@@ -9,6 +9,9 @@ import esm
 from torch.utils.data import DataLoader
 import pickle
 from model import custom_collate,DrugProteinDataset,protein_graph_to_data,drug_graph_to_data
+from rdkit.Chem import SanitizeMol, SanitizeFlags
+
+
 
 # Constants
 l_sub=10
@@ -214,3 +217,4 @@ def test_top_antivirus(model,esm_model,esm_alphabet,virus):
     top5_smiles = [drugs[i] for i in top5_indices]
 
     return top5_smiles
+

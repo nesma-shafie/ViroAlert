@@ -46,8 +46,9 @@ body {
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;  
-    --virogen-blue: 213.91deg 100% 4.51%; /* Added custom color */
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --virogen-blue: 214 100% 10%; /* Consistent in dark mode */
+    --virogen-blue-light: 214 100% 20%; /* Consistent lighter shade */
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -82,11 +83,46 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --virogen-blue: 214 100% 10%; /* Consistent in dark mode */
+    --virogen-blue-light: 214 100% 20%; /* Consistent lighter shade */
   }
+}
+
+/* ViroGen color classes */
+.virogen-blue {
+  background-color: hsl(var(--virogen-blue)) !important;
+}
+
+.virogen-light-blue {
+  background-color: hsl(var(--virogen-blue-light)) !important;
 }
 
 .bg-virogen-blue {
   background-color: hsl(var(--virogen-blue)) !important;
+}
+
+.bg-virogen-light-blue {
+  background-color: hsl(var(--virogen-blue-light)) !important;
+}
+
+.text-virogen-blue {
+  color: hsl(var(--virogen-blue)) !important;
+}
+
+.text-virogen-light-blue {
+  color: hsl(var(--virogen-blue-light)) !important;
+}
+
+.border-virogen-blue {
+  border-color: hsl(var(--virogen-blue)) !important;
+}
+
+.border-virogen-light-blue {
+  border-color: hsl(var(--virogen-blue-light)) !important;
+}
+
+.hover\:virogen-light-blue:hover {
+  background-color: hsl(var(--virogen-blue-light)) !important;
 }
 
 @layer base {

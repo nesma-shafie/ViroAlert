@@ -19,7 +19,7 @@ export default function Footer() {
 
       {/* Footer bar */}
     <div className="bg-virogen-blue py-2 text-white text-center text-xs">
-    ViroGen © {new Date().getFullYear()} | All Rights Reserved
+    ViroGen © 2025 | All Rights Reserved
     </div>
     </footer>
   )

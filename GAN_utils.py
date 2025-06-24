@@ -131,8 +131,11 @@ def get_new_antivirus(generator,DTI_model, esm_model, esm_alphabet, new_virus, c
     best_drugs = []
     drug_7=0
     trials=0
+    virus_graph=protein_graph(esm_model,esm_alphabet,new_virus)
+    virus_graph = protein_graph_to_data(virus_graph).to(device)
     with torch.no_grad():
         while(len(best_drugs)<5 and trials<5):
+            print("trial ",trials)
             n=100
             trials+=1
             generated, _ = generator.sample(char2idx['<SOS>'], 128,n,temperature=1)
@@ -142,8 +145,7 @@ def get_new_antivirus(generator,DTI_model, esm_model, esm_alphabet, new_virus, c
                 if valid:
                     drug_graph=smile_graph(smiles)
                     drug_graph = drug_graph_to_data(drug_graph).to(device)
-                    virus_graph=protein_graph(esm_model,esm_alphabet,new_virus)
-                    virus_graph = protein_graph_to_data(virus_graph).to(device)
+                    
                     output = DTI_model(virus_graph, drug_graph)
                     # print("out",output,"valid",valid)
                     if(output.item()>7):

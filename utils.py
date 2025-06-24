@@ -195,9 +195,9 @@ def test_antivirus(model,esm_model,esm_alphabet,virus,smiles):
     return output
 
 def test_top_antivirus(model,esm_model,esm_alphabet,virus):
-    with open(r"data\drug_graphs.pkl", "rb") as f:
+    with open(r"data/drug_graphs.pkl", "rb") as f:
         drug_graphs = pickle.load(f)
-    drugs=pd.read_csv(r"data\drugs.csv")
+    drugs=pd.read_csv(r"data/drugs.csv")
     drugs = drugs['SMILES'].tolist()
 
     virus_graph = protein_graph(esm_model, esm_alphabet, virus)

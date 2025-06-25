@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import axios from 'axios';
+import axios from "axios";
 import {
   Card,
   CardContent,
@@ -16,6 +16,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import { motion } from "framer-motion";
+
+
+import { toast } from "sonner";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +33,10 @@ export default function AuthPage() {
     const confirmPassword = formData.get("confirmPassword") as string;
     const username = formData.get("username") as string;
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      toast.error( "Signup failed. Please try again.", {
+        style: { background: "#fee2e2", color: "#dc2626", borderLeft: "4px solid #dc2626" },
+      });
+      // alert("Passwords do not match!");
       setIsLoading(false);
       return;
     }
@@ -44,16 +50,22 @@ export default function AuthPage() {
       username,
       // Add other signup data as needed (e.g., confirmPassword)
     };
-    const response = await axios.post('http://localhost:3000/viroGen/app/auth/signup', 
-     body
-      // Add other signup data as needed (e.g., password)
-    );
-    setIsLoading(false);
-    if (response.status === 200) {
-     localStorage.setItem("token", response.data.token);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/viroGen/app/auth/signup",
+        body
+        // Add other signup data as needed (e.g., password)
+      );
+      setIsLoading(false);
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
 
-      router.push("/");
-    } else {
+        router.push("/");
+      } else {
+        alert("Signup failed. Please try again.");
+      }
+    } catch (error) {
+      setIsLoading(false);
       alert("Signup failed. Please try again.");
     }
     // Optionally handle response, e.g., redirect or show message
@@ -63,16 +75,31 @@ export default function AuthPage() {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email") as string;
+    const username = formData.get("username") as string;
     const password = formData.get("password") as string;
-    setTimeout(() => {
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ email, authenticated: true })
+    const body = {
+      username,
+      password,
+    };
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/viroGen/app/auth/login",
+        body
+        // Add other signup data as needed (e.g., password)
       );
-      router.push("/hello");
       setIsLoading(false);
-    }, 1000);
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        router.push("/");
+      } else {
+        alert("Login failed. Please check your credentials.");
+      }
+    } catch {
+      setIsLoading(false);
+
+      alert("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -80,7 +107,7 @@ export default function AuthPage() {
       <div className="max-w-md w-full space-y-6">
         <div className="flex flex-col items-center">
           <motion.div
-            animate={{ y: [0, -20, 0]             }}
+            animate={{ y: [0, -20, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
             <Image
@@ -110,12 +137,12 @@ export default function AuthPage() {
               <TabsContent value="login">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div>
-                    <Label htmlFor="login-email">Email</Label>
+                    <Label htmlFor="login-username">UserName</Label>
                     <Input
-                      id="login-email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
+                      id="login-username"
+                      name="username"
+                      type="text"
+                      placeholder="Enter your  username"
                       required
                     />
                   </div>
@@ -141,7 +168,7 @@ export default function AuthPage() {
 
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
-                    <div>
+                  <div>
                     <Label htmlFor="signup-username">UserName</Label>
                     <Input
                       id="signup-username"

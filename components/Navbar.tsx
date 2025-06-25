@@ -40,23 +40,23 @@ export default function Navbar() {
             updated.push({
               href: "",
               label: (
-              <span className="flex items-center space-x-2 group relative cursor-default select-none">
-                <span className="relative w-[30px] h-[30px] flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold text-lg overflow-hidden">
-                <Image
-                  src="/user.png"
-                  alt="User Avatar"
-                  width={30}
-                  height={30}
-                  className="rounded-full absolute inset-0 object-cover"
-                />
-                <span className="relative z-10 text-white font-bold">
-                  {username && username[0]?.toUpperCase()}
+                <span className="flex items-center space-x-2 group relative cursor-default select-none">
+                  <span className="relative w-[30px] h-[30px] flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold text-lg overflow-hidden">
+                    <Image
+                      src="/user.png"
+                      alt="User Avatar"
+                      width={30}
+                      height={30}
+                      className="rounded-full absolute inset-0 object-cover"
+                    />
+                    <span className="relative z-10 text-white font-bold">
+                      {username && username[0]?.toUpperCase()}
+                    </span>
+                  </span>
+                  <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                    {username}
+                  </span>
                 </span>
-                </span>
-                <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                {username}
-                </span>
-              </span>
               ),
             });
           }
@@ -123,14 +123,13 @@ export default function Navbar() {
             <Link
               key={typeof link.label === "string" ? link.label : link.href}
               href={link.href}
-              className={`hover:bg-gray-100 px-3 py-2 rounded-md transition-colors ${
-                pathname === link.href ? "bg-cyan-600 text-white font-semibold" : ""
-              }`}
+              className={`hover:bg-gray-100 px-3 py-2 rounded-md transition-colors ${pathname === link.href ? "bg-cyan-600 text-white font-semibold" : ""
+                }`}
             >
               {link.label}
             </Link>
           ))}
-          
+
         </nav>
       </div>
     </header>

@@ -1,5 +1,7 @@
 "use client"
 
+
+import Typewriter from 'typewriter-effect';
 import { Card, CardContent } from "@/components/ui/card"
 import { BrainCog, ShieldCheck, FlaskConical } from "lucide-react"
 
@@ -8,7 +10,7 @@ const iconProps = { className: "w-6 h-6 text-white" }
 export default function AboutPage() {
   const features = [
     {
-      icon: BrainCog ,
+      icon: BrainCog,
       title: "AI-Driven Prediction",
       description: "Utilizing advanced machine learning and deep learning techniques to predict the pandemic potential of emerging viruses with high accuracy.",
     },
@@ -18,9 +20,9 @@ export default function AboutPage() {
       description: "Employing structural embeddings and domain-specific fine-tuning to generate novel antiviral candidates that effectively target viral proteins.",
     },
     {
-    icon: FlaskConical,
-    title: "Biological Relevance",
-    description: "Utilizes Drug-Target Interaction (DTI) models to rank generated molecules by biological efficacy and identify top-performing commercial antivirals.",
+      icon: FlaskConical,
+      title: "Biological Relevance",
+      description: "Utilizes Drug-Target Interaction (DTI) models to rank generated molecules by biological efficacy and identify top-performing commercial antivirals.",
     }
   ]
 
@@ -48,13 +50,20 @@ export default function AboutPage() {
                 {/* Cyan vertical accent line */}
                 <div className="absolute -left-6 top-0 w-1 h-32 bg-cyan-400"></div>
                 <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
-                  About Our
-                  <br />
-                  ViroGen AI
-                  <br />
-                  Platform
+                  <Typewriter
+                    options={{
+                      strings: [
+                        "Hi, I'm ViroGen AI 👋",
+                      ],
+                      autoStart: true,
+                      loop: true,
+                      delay: 75,
+                      deleteSpeed: 50,
+                    }}
+                  />
                 </h1>
-                <p className="text-gray-300 text-lg leading-relaxed max-w-md">
+
+                <p className="text-gray-300 text-lg  leading-relaxed max-w-md">
                   ViroGen is an AI-powered platform designed to predict virus behavior, generate antiviral drug candidates, and evaluate their effectiveness.
                 </p>
               </div>

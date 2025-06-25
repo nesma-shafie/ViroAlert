@@ -30,3 +30,9 @@ model WebTokens {
     user     User   @relation(fields: [userID], references: [id], onDelete: Cascade, onUpdate: Cascade)
     token String 
 }
+
+model sequence {
+    id                       String          @id @default(cuid())
+    label                     String          @unique
+    sequence                    String          @db.Text
+}

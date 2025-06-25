@@ -6,11 +6,12 @@ import swaggerUi from "swagger-ui-express";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import cors from "cors";
+import { importCSV } from "./utils/addSeq.js";
+importCSV("ncbi_cleaned_train_data.csv"); // Import sequences from CSV file
 // config swagger
 const swaggerSpecs = swaggerJsdoc(swaggerConfig);
 
 const app = express();
-
 app.use(express.json());
 app.use(cors({
     origin: 'http://localhost:3001', // Your frontend URL

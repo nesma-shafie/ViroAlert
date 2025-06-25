@@ -1,7 +1,8 @@
 import axios from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
-
+import { getKmers, jaccardSimilarity, align2seq } from '../utils/align.js';
+import prisma from '../prisma.js'; // Assuming you have a Prisma client setup
 const predictHost = async (req, res) => {
     const filePath = req.file.path;  // assuming multer stores it here
     const fileName = req.file.originalname;
@@ -101,6 +102,54 @@ const generateAntiVirus = async (req, res) => {
       data: fastapiResponse.data,
     });
   }
+const align=async (req, res) => {
+    const form = new FormData();
 
+    // If FASTA file is uploaded
+   let input_sequence = '';
+    if (req.file) {
+      const filePath = req.file.path;
+      const fileName = req.file.originalname;
 
-export  {predictHost, predictAntivirus,topAntivirus,generateAntiVirus};
+      // form.append('file', fs.createReadStream(filePath), fileName);
+      input_sequence = fs.readFileSync(filePath+fileName, 'utf8').trim();
+    }
+
+    // If sequences are provided manually (and not file)
+    if (!req.file && req.body.seq1) {
+      input_sequence = req.body.seq1;
+    }
+    //get the sequence from the DB
+   const inputKmers = getKmers(input_sequence, 5); // Can tune k
+
+  // Fetch known sequences
+  const knownSequences = await prisma.sequence.findMany();
+
+  // Step 1: Filter by Jaccard similarity
+  const filtered = knownSequences
+    .map(entry => {
+      const targetKmers = getKmers(entry.sequence, 5);
+      const jaccard = jaccardSimilarity(inputKmers, targetKmers);
+      return { ...entry, jaccard };
+    })
+    .filter(entry => entry.jaccard >= 0.2); 
+    console.log(filtered.length);
+    // Sort by Jaccard descending
+    filtered.sort((a, b) => b.jaccard - a.jaccard);
+
+  // Step 2: Run alignment only on the top N from filtered
+  const results = filtered.slice(0, 30).map(entry => {
+    const score = align2seq(input_sequence, entry.sequence); // fast version
+    return { label: entry.label, sequence: entry.sequence, jaccard: entry.jaccard, score };
+  });
+
+  // Sort by highest score (closest match first)
+  results.sort((a, b) => b.score - a.score);
+
+  res.json({
+    input: input_sequence,
+    closest_matches: results.slice(0, 5) // top 5 matches
+  });
+     }
+
+export  {predictHost, predictAntivirus,topAntivirus,generateAntiVirus,align};

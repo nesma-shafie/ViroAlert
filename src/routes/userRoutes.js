@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { predictHost,predictAntivirus,topAntivirus ,generateAntiVirus} from "../controllers/userController.js";
+import { predictHost,predictAntivirus,topAntivirus ,generateAntiVirus,align} from "../controllers/userController.js";
 import { auth } from "../middlewares/auth.js";
 import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
@@ -158,7 +158,7 @@ userRouter.route('/predictHost').post(auth,upload.single('file'), predictHost);
 userRouter.route('/predictAntiVirus').post(auth, upload.single('file'), predictAntivirus);
 userRouter.route('/generateAntiVirus').post(auth, upload.single('file'), generateAntiVirus);
 userRouter.route('/topAntiVirus').post(auth, upload.single('file'), topAntivirus);
-
+userRouter.route('/align').get(auth,upload.single('file'), align)
 
 
 

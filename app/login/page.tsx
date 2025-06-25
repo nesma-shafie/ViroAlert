@@ -40,9 +40,6 @@ export default function AuthPage() {
       setIsLoading(false);
       return;
     }
-    console.log("Email:", email);
-    console.log("password:", password);
-    console.log("usernaem:", username);
 
     const body = {
       email,
@@ -58,8 +55,9 @@ export default function AuthPage() {
       );
       setIsLoading(false);
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
-
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("auth", "true");
+        localStorage.setItem("username", username);
         router.push("/");
       } else {
         alert("Signup failed. Please try again.");
@@ -77,6 +75,7 @@ export default function AuthPage() {
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
+    
     const body = {
       username,
       password,
@@ -88,9 +87,11 @@ export default function AuthPage() {
         // Add other signup data as needed (e.g., password)
       );
       setIsLoading(false);
-
+      
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("token", response.data.data.token);
+        localStorage.setItem("auth", "true");
+        localStorage.setItem("username", username);
         router.push("/");
       } else {
         alert("Login failed. Please check your credentials.");

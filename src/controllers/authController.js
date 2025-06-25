@@ -11,7 +11,7 @@ import {
 import {removeToken} from "../services/authService.js";
 
 const signup = async (req, res, next) => {
-  const { email, name, password, username } = req.body;
+  const { email, password, username } = req.body;
   // 1) check if the username, email is valid
   const usersCount = await getUsersCountByEmailUsername(email, username);
 
@@ -24,7 +24,7 @@ const signup = async (req, res, next) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 8);
-  let user = await createNewUser(email, username, name, hashedPassword);
+  let user = await createNewUser(email, username, hashedPassword);
   if (!user) {
     return res.status(400).json({
       status: "fail",

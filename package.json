@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "form-data": "^4.0.3",
     "jsonwebtoken": "^9.0.2",
@@ -18,5 +19,19 @@
     "swagger-ui-express": "^5.0.1",
     "yup": "^1.6.1",
     "yup-password": "^0.4.0"
-  }
+  },
+  "name": "virogen",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nesma-shafie/ViroGen.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nesma-shafie/ViroGen/issues"
+  },
+  "homepage": "https://github.com/nesma-shafie/ViroGen#readme",
+  "description": ""
 }

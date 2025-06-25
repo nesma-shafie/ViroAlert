@@ -23,12 +23,11 @@ const getUsersCountByEmailUsername = async (email, username) => {
 /**
  * Create a new user
  */
-const createNewUser = async (email, username, name, hashedPassword) => {
+const createNewUser = async (email, username, hashedPassword) => {
   return await prisma.user.create({
     data: {
       email: email.toLowerCase(),
       username: username.toLowerCase(),
-      name,
       password: hashedPassword,
     },
   });
@@ -44,7 +43,6 @@ const getUserBasicInfoByUUID = async (id) => {
       id: true,
       email: true,
       username: true,
-      name: true,
     },
   });
 };
@@ -60,7 +58,6 @@ const getUserBasicInfoByUsername = async (username) => {
     select: {
       id: true,
       username: true,
-      name: true,
       email: true,
     },
   });

@@ -12,11 +12,6 @@ import {
 const signupSchema = yup.object({
   body: yup.object({
     email: emailField,
-    name: yup
-      .string()
-      .min(3, "name must be at least 3 characters")
-      .max(50, "name must be at most 50 characters")
-      .required("name is required field"),
     username: usernameField,
     password: passwordField,
   }),
@@ -25,8 +20,7 @@ const signupSchema = yup.object({
 const loginSchema = yup.object({
   body: yup.object({
     username: usernameField,
-    password: passwordField,
-  }),
+    password:yup.string().required("Password is required") }),
 });
 
 export { loginSchema, signupSchema };

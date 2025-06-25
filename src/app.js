@@ -5,12 +5,18 @@ import swaggerUi from "swagger-ui-express";
 
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-
+import cors from "cors";
 // config swagger
 const swaggerSpecs = swaggerJsdoc(swaggerConfig);
+
 const app = express();
 
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:3001', // Your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    credentials: true, // Include cookies if needed
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // swagger documentation route

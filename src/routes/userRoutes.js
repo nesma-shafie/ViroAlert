@@ -156,11 +156,8 @@ const upload = multer({ dest: 'uploads/' });
 const userRouter = Router();
 userRouter.route('/predictHost').post(auth,upload.single('file'), predictHost);
 userRouter.route('/predictAntiVirus').post(auth, upload.single('file'), predictAntivirus);
-<<<<<<< HEAD
 userRouter.route('/generateAntiVirus').post(auth, upload.single('file'), generateAntiVirus);
-=======
 userRouter.route('/topAntiVirus').post(auth, upload.single('file'), topAntivirus);
->>>>>>> f86310d75659f6d7f7962ec18de7a2e1322f6df8
 
 
 

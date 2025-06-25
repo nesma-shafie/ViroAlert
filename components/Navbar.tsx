@@ -16,7 +16,6 @@ export default function Navbar() {
 
   const [navLinks, setNavLinks] = useState<NavLink[]>([
     { href: "/", label: "About" },
-    { href: "/contact", label: "Contact" },
     { href: "/login", label: "Login" },
   ]);
 
@@ -36,22 +35,28 @@ export default function Navbar() {
           const updated = [...prev];
           const loginIndex = updated.findIndex((link) => link.href === "/login");
           if (loginIndex !== -1) {
-            updated[loginIndex] = { href: "/logout", label: "Logout" };
+            updated.splice(loginIndex, 1, { href: "/features", label: "Features" });
+            updated.push({ href: "/logout", label: "Logout" })
             updated.push({
-              href: "/profile",
+              href: "",
               label: (
-                <span className="flex items-center space-x-2 group relative">
-                  <Image
-                    src="/placeholder-user.jpg"
-                    alt="User Avatar"
-                    width={30}
-                    height={30}
-                    className="rounded-full"
-                  />
-                  <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                    {username}
-                  </span>
+              <span className="flex items-center space-x-2 group relative cursor-default select-none">
+                <span className="relative w-[30px] h-[30px] flex items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold text-lg overflow-hidden">
+                <Image
+                  src="/user.png"
+                  alt="User Avatar"
+                  width={30}
+                  height={30}
+                  className="rounded-full absolute inset-0 object-cover"
+                />
+                <span className="relative z-10 text-white font-bold">
+                  {username && username[0]?.toUpperCase()}
                 </span>
+                </span>
+                <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                {username}
+                </span>
+              </span>
               ),
             });
           }
@@ -61,11 +66,17 @@ export default function Navbar() {
         setNavLinks((prev) => {
           const updated = [...prev];
           const logoutIndex = updated.findIndex((link) => link.href === "/logout");
-          const profileIndex = updated.findIndex((link) => link.href === "/profile");
+          const featureIndex = updated.findIndex((link) => link.href === "/features");
+          const profileIndex = updated.findIndex((link) => link.href === "");
 
           if (logoutIndex !== -1) {
             updated.splice(logoutIndex, 1);
           }
+
+          if (featureIndex !== -1) {
+            updated.splice(featureIndex, 1);
+          }
+
           if (profileIndex !== -1) {
             updated.splice(profileIndex, 1);
           }

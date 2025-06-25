@@ -104,7 +104,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-[100vh] overflow-hidden flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100">
+    <div className="min-h-[100vh] overflow-hidden flex items-center justify-center bg-gradient-to-br from-gray-100 to-blue-100">
       <div className="max-w-md w-full space-y-6">
         <div className="flex flex-col items-center">
           <motion.div

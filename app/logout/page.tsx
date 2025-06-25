@@ -20,7 +20,7 @@ const Logout = () => {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center bg-gradient-to-br from-gray-100 to-blue-100">
       <div className="bg-white rounded-lg shadow-lg p-12 text-center max-w-md w-full mx-4 flex flex-col items-center">
         {/* Logo */}
         <div className="mb-8 ">

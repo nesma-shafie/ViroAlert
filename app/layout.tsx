@@ -1,12 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Virogen',
 };
 
 import { ReactNode } from 'react';
@@ -16,8 +13,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body>
         <Navbar />
-         {children}
-        <Footer /> 
+        <div className='min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-slate-200 p-6'>
+          {children}
+        </div>
+        {/* <Footer /> */}
       </body>
     </html>
   );

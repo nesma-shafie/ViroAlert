@@ -214,7 +214,7 @@ def test_top_antivirus(model,esm_model,esm_alphabet,virus):
             outputs.extend(output.cpu().detach().numpy())
     outputs = np.array(outputs)
     top5_indices = outputs.argsort()[::-1][:5]  # Descending order
-    top5_smiles = [drugs[i] for i in top5_indices]
+    top5_smiles = [(drugs[i], float(outputs[i])) for i in top5_indices]
 
     return top5_smiles
 

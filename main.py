@@ -143,5 +143,5 @@ async def generate_antivirus(
         
     drugs=get_new_antivirus(generator,antivirus_model, esm_model, esm_alphabet, virus_seq, char2idx, idx2char)
     return {
-        drugs:drugs
+        "drugs":drugs
     }

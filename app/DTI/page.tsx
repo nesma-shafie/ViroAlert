@@ -16,7 +16,7 @@ export default function PredictAntivirusPage() {
   const [smiles, setSmiles] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [pic50, setPic50] = useState<number | null>(null);
-
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!virus && !file) {
@@ -37,7 +37,7 @@ export default function PredictAntivirusPage() {
 
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:3000/ViroGen/app/user/predictAntiVirus",
+        `${baseURL}/user/predictAntiVirus`,
         form,
         {
           headers: {
@@ -142,14 +142,14 @@ export default function PredictAntivirusPage() {
 
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <div className="flex justify-center">
-  <Button
-    type="submit"
-    disabled={isLoading}
-    className="w-56 virogen-blue hover:virogen-light-blue text-white"
-  >
-    {isLoading ? "Predicting..." : "Predict pIC50"}
-  </Button>
-</div>
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-56 virogen-blue hover:virogen-light-blue text-white"
+                    >
+                      {isLoading ? "Predicting..." : "Predict pIC50"}
+                    </Button>
+                  </div>
                 </motion.div>
               </form>
             </CardContent>
@@ -197,14 +197,14 @@ export default function PredictAntivirusPage() {
                   </motion.div>
                 ) : (
                   <motion.div
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 0.5 }}
-  className="flex flex-col items-center justify-center h-48 text-gray-500 text-center"
->
-  <TestTube2 className="h-12 w-12 text-blue-300 mb-2" />
-  <p className="text-sm">Enter data and predict to see results.</p>
-</motion.div>
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col items-center justify-center h-48 text-gray-500 text-center"
+                  >
+                    <TestTube2 className="h-12 w-12 text-blue-300 mb-2" />
+                    <p className="text-sm">Enter data and predict to see results.</p>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </CardContent>

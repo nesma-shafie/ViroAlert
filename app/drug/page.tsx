@@ -1,5 +1,6 @@
+'use client';
 import MoleculeItems from '@/components/Molecule/MoleculeItems';
-import { getDrugs } from '@/lib/api';
+import { useFormContext } from '@/context/FormContext';
 import { Drug } from '@/types';
 
 
@@ -12,6 +13,7 @@ const drugs: Drug[] = [
 ];
 
 export default async function DrugPage() {
+    const { drugs } = useFormContext();
     // const { drugs } = await getDrugs();
     return (
         <MoleculeItems drugs={drugs} title={"Recommended Antiviruses"} />

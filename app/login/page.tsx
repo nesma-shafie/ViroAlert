@@ -23,6 +23,7 @@ import { toast } from "sonner";
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +34,7 @@ export default function AuthPage() {
     const confirmPassword = formData.get("confirmPassword") as string;
     const username = formData.get("username") as string;
     if (password !== confirmPassword) {
-      toast.error( "Signup failed. Please try again.", {
+      toast.error("Signup failed. Please try again.", {
         style: { background: "#fee2e2", color: "#dc2626", borderLeft: "4px solid #dc2626" },
       });
       // alert("Passwords do not match!");
@@ -49,7 +50,7 @@ export default function AuthPage() {
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/viroGen/app/auth/signup",
+        `${baseURL}/auth/signup`,
         body
         // Add other signup data as needed (e.g., password)
       );
@@ -75,19 +76,19 @@ export default function AuthPage() {
     const formData = new FormData(e.currentTarget);
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
-    
+
     const body = {
       username,
       password,
     };
     try {
       const response = await axios.post(
-        "http://localhost:3000/viroGen/app/auth/login",
+        `${baseURL}/auth/login`,
         body
         // Add other signup data as needed (e.g., password)
       );
       setIsLoading(false);
-      
+
       if (response.status === 200) {
         localStorage.setItem("token", response.data.data.token);
         localStorage.setItem("auth", "true");

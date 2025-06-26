@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '../components/Navbar';
+import { FormProvider } from '@/context/FormContext';
 
 export const metadata: Metadata = {
   title: 'Virogen',
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <Navbar />
         <div className='min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-slate-200 p-6'>
-          {children}
+          <FormProvider>
+            {children}
+          </FormProvider>
         </div>
         {/* <Footer /> */}
       </body>

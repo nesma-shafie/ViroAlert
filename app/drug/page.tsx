@@ -14,8 +14,7 @@ const drugs: Drug[] = [
 
 export default async function DrugPage() {
     // const { drugs } = useFormContext();
-    // const { drugs } = await getDrugs();
     return (
-        <MoleculeItems drugs={drugs} title={"Recommended Antiviruses"} />
+        <MoleculeItems drugs={drugs} title={"Drug SMILES"} />
     );
 }

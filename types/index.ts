@@ -4,7 +4,7 @@ export interface Drug {
   kp: number;
 }
 export interface ModelResult {
-    name: string;
-    confidence: number; // 0 to 100
-    explanationImages: string[]; // 2 images per model
+    confidence: number;
+    explanationImages?: string[]; // optional now
+    type: 'ml' | 'dl';
 }

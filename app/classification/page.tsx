@@ -1,17 +1,17 @@
-
-import ClassificationItems from "@/components/Classification/ClassificationItems";
+'use client';
+import ClassificationCardCombined from "@/components/Classification/ClassificationCardCombined";
 import { ModelResult } from "@/types"
+import { motion } from "framer-motion";
 
 const models: ModelResult[] = [
     {
-        name: 'Virus2Vec (ML)',
         confidence: 78.5,
-        explanationImages: ['/bag-level.png', '/instance-level.png'],
+        type: 'ml',
     },
     {
-        name: 'ViroGen (DL)',
         confidence: 91.2,
         explanationImages: ['/bag-level.png', '/instance-level.png'],
+        type: 'dl',
     },
 ];
 
@@ -19,10 +19,15 @@ export default async function ClassificationPage() {
     // const [ml, dl] = await Promise.all([getMLResult(), getDLResult()]);
     return (
         <div>
-            <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+            <motion.h1
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-4xl font-bold text-center mb-8 text-gray-800"
+            >
                 🧬 Virus Human Adaptation Prediction
-            </h1>
-            <ClassificationItems models={models} />
+            </motion.h1>
+            <ClassificationCardCombined ml={models[0]} dl={models[1]} />
         </div>
     );
 }

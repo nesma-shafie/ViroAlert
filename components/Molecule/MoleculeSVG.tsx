@@ -1,3 +1,5 @@
+'use client';
+
 import * as OCL from 'openchemlib';
 
 export default function MoleculeSVG({ smiles }: { smiles: string }) {

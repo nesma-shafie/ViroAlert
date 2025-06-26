@@ -1,3 +1,4 @@
+'use client';
 import { motion } from "framer-motion";
 import MoleculeCard from "./MoleculeCard";
 import { Drug } from '@/types';
@@ -22,7 +23,7 @@ export default function MoleculeItems({ drugs, title }: MoleculeItemsProps) {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.2, duration: 0.5, ease: "easeOut" }}
                     >
-                        <MoleculeCard name={drug.name} smiles={drug.smiles} kp={drug.kp} />
+                        <MoleculeCard smiles={drug.smiles} PIC50={drug.PIC50} />
                     </motion.div>
                 ))}
             </div>

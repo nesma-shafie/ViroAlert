@@ -11,11 +11,11 @@ import { Brush, Dna, ShieldCheck, Brain, Newspaper, ArrowRight, Sparkles } from 
 
 const features = [
   {
-    title: "ViroGen",
+    title: "ViroGen Core",
     icon: Brain,
     description: "Generate novel antiviral candidates using advanced deep learning algorithms and molecular modeling.",
   
-    href: "/virogen",
+    href: "/classification",
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-100",
     textColor: "text-purple-700",
@@ -47,10 +47,10 @@ const features = [
     y: "12rem",
   },
   {
-    title: "Visualization",
+    title: "Generate Drug",
     icon: Brush,
-    description: "Visualize complex interaction networks and compound properties interactively.",
-    href: "/visualization",
+    description: "",
+    href: "/upload-virus",
     color: "from-orange-500 to-red-500",
     bgColor: "bg-orange-100",
     textColor: "text-orange-700",

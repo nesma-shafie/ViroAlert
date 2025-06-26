@@ -16,7 +16,7 @@ export const useFormContext = () => {
 };
 
 export const FormProvider = ({ children }: { children: ReactNode }) => {
-    const [drugs, setdrugs] = useState([] as Drug[]);
+    const [drugs, setdrugs] = useState<Drug[]>([]);
     return (
         <FormContext.Provider value={{ drugs, setdrugs }}>
             {children}

@@ -9,13 +9,14 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import axios from "axios";
 import { useFormContext } from "@/context/FormContext";
+import { Drug } from '@/types';
 
 
 export default function uploadvirus() {
     const [virus, setVirus] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const { setdrugs } = useFormContext();
+    const { drugs, setdrugs } = useFormContext();
     const router = useRouter();
     const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
     const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +32,7 @@ export default function uploadvirus() {
             else form.append("virus", virus);
             const token = localStorage.getItem("token");
             const response = await axios.post(
-                `${baseURL}/user/predictAntiVirus`,
+                `${baseURL}/user/topAntiVirus`,
                 form,
                 {
                     headers: {
@@ -40,9 +41,13 @@ export default function uploadvirus() {
                     },
                 }
             );
-            const value = response.data?.data?.pIC50;
-            if (value !== undefined) {
-                setdrugs(response.data.data.drugs);
+            const value = response.data?.data?.top_smiles;
+            const formattedValue: Drug[] = value.map((val: [string, number]) => ({
+                smiles: val[0],
+                PIC50: val[1],
+            }));
+            if (formattedValue !== undefined) {
+                setdrugs(formattedValue);
                 router.push("/drug");
             } else {
                 alert("No prediction value returned.");

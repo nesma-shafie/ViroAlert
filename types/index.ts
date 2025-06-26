@@ -1,7 +1,6 @@
 export interface Drug {
-  name: string;
   smiles: string;
-  kp: number;
+  PIC50: number;
 }
 export interface ModelResult {
     confidence: number;

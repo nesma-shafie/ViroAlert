@@ -9,9 +9,6 @@ import axios from "axios";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
@@ -54,6 +51,7 @@ export default function AuthPage() {
         body
         // Add other signup data as needed (e.g., password)
       );
+
       setIsLoading(false);
       if (response.status === 200) {
         localStorage.setItem("token", response.data.data.token);
@@ -61,11 +59,11 @@ export default function AuthPage() {
         localStorage.setItem("username", username);
         router.push("/");
       } else {
-        alert("Signup failed. Please try again.");
+        alert(`Signup failed, ${response.data.data.message}`);
       }
     } catch (error) {
       setIsLoading(false);
-      alert("Signup failed. Please try again.");
+      alert(`Signup failed, ${error}`);
     }
     // Optionally handle response, e.g., redirect or show message
   };
@@ -99,7 +97,6 @@ export default function AuthPage() {
       }
     } catch {
       setIsLoading(false);
-
       alert("Login failed. Please check your credentials.");
     }
   };

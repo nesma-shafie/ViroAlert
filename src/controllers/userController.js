@@ -10,7 +10,8 @@ const predictHost = async (req, res) => {
     const form = new FormData();
     form.append('file', fs.createReadStream(filePath), fileName);
 
-    const fastapiResponse = await axios.post('http://localhost:8000/predict-host', form, {
+    const url=process.env.FASTAPI_URL + '/predict-host'; // Ensure you have this environment variable set
+    const fastapiResponse = await axios.post(url, form, {
       headers: form.getHeaders(),
     });
 
@@ -39,7 +40,9 @@ const predictAntivirus = async (req, res) => {
     form.append('smiles', req.body.smiles);
 
 
-    const fastapiResponse = await axios.post('http://localhost:8000/predict-antivirus', form, {
+    const url=process.env.FASTAPI_URL + '/predict-antivirus'; 
+
+    const fastapiResponse = await axios.post(url, form, {
       headers: form.getHeaders(),
     });
 
@@ -65,9 +68,8 @@ const topAntivirus = async (req, res) => {
       form.append('virus', req.body.virus);
     }
 
-
-
-    const fastapiResponse = await axios.post('http://localhost:8000/top-antivirus', form, {
+    const url=process.env.FASTAPI_URL + '/top-antivirus'; // Ensure you have this environment variable set
+    const fastapiResponse = await axios.post(url, form, {
       headers: form.getHeaders(),
     });
 
@@ -93,7 +95,8 @@ const generateAntiVirus = async (req, res) => {
       form.append('virus', req.body.virus);
     }
 
-    const fastapiResponse = await axios.post('http://localhost:8000/generate-antivirus', form, {
+    const url=process.env.FASTAPI_URL + '/generate-antivirus'; // Ensure you have this environment variable set
+    const fastapiResponse = await axios.post(url, form, {
       headers: form.getHeaders(),
     });
 

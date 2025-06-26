@@ -7,7 +7,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import cors from "cors";
 import { importCSV } from "./utils/addSeq.js";
-importCSV("ncbi_cleaned_train_data.csv"); // Import sequences from CSV file
+// importCSV("ncbi_cleaned_train_data.csv"); // Import sequences from CSV file
 // config swagger
 const swaggerSpecs = swaggerJsdoc(swaggerConfig);
 

@@ -8,8 +8,7 @@ from gensim.models import FastText
 from model import GatedAttention,DrugTargetGNN
 import esm
 from typing import Optional
-import pickle
-from utils import read_virus,read_virus_seqs,test_one_virus,test_antivirus,test_top_antivirus
+from utils import read_virus,read_virus_seqs,test_one_virus,test_antivirus,test_top_antivirus,visualize_attention_2d_heatmaps
 import argparse
 torch.serialization.add_safe_globals([argparse.Namespace])
 from GAN_utils import get_new_antivirus
@@ -85,12 +84,18 @@ async def predict_host(file: UploadFile=File(...)):
 
     #  Make prediction
     Y_prob, Y_hat, A, A_2 = test_one_virus(model,ft_model,datas,ids,seq_ids)
-    print(f"Y_prob: {Y_prob}, Y_hat: {Y_hat}")
+    A = [a.cpu().numpy() if isinstance(a, torch.Tensor) and a.is_cuda else a.numpy() if isinstance(a, torch.Tensor) else np.array(a) for a in A]
+    A_2 = [a_2.cpu().numpy() if isinstance(a_2, torch.Tensor) and a_2.is_cuda else a_2.numpy() if isinstance(a_2, torch.Tensor) else np.array(a_2) for a_2 in A_2]
+    A = np.array(A)
+    A_2 = np.array(A_2)      
+    base64_img = visualize_attention_2d_heatmaps(A, A_2, seq_ids_original, ids_original)
 
     return {
         "prediction": Y_hat.tolist()[0],
         "probability": Y_prob.tolist()[0],
-    }
+        "img":base64_img
+}
+
 @app.post("/predict-antivirus")
 async def predict_antivirus(
     file: Optional[UploadFile] = File(None),
@@ -125,10 +130,10 @@ async def top_antivirus(
     return {
         "top_smiles": top_smiles,
     }
-    
+
+
     
 @app.post("/generate-antivirus")
-
 async def generate_antivirus(
     file: Optional[UploadFile] = File(None),
     virus: Optional[str] = Form(None),

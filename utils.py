@@ -10,6 +10,10 @@ from torch.utils.data import DataLoader
 import pickle
 from model import custom_collate,DrugProteinDataset,protein_graph_to_data,drug_graph_to_data
 from rdkit.Chem import SanitizeMol, SanitizeFlags
+import matplotlib.pyplot as plt
+import seaborn as sns
+from io import BytesIO
+import base64
 
 
 
@@ -78,6 +82,36 @@ def test_one_virus(model,ft_model,datas,ids,seq_ids,labels=None):
     with torch.no_grad():
         Y_prob, Y_hat, A, A_2 =model(embeddings,ids,seq_ids)         
     return Y_prob, Y_hat, A, A_2 
+
+def visualize_attention_2d_heatmaps(A, A_2, Seq_ids, super_ids):
+    img_io = BytesIO()
+
+    plt.figure(figsize=(12, 6))
+
+    # Instance-level attention heatmap
+    plt.subplot(1, 2, 1)
+    sns.heatmap(A, cmap="viridis", cbar_kws={'label': 'Attention Weight'})
+    plt.title("Instance-Level Attention (A)")
+    plt.xlabel("Instances (Tokens)")
+    plt.ylabel("Bags (Sequences)")
+    plt.yticks(ticks=np.arange(len(Seq_ids)) + 0.5, labels=Seq_ids, rotation=0)
+
+    # Bag-level attention heatmap
+    plt.subplot(1, 2, 2)
+    sns.heatmap(A_2, cmap="viridis", cbar_kws={'label': 'Attention Weight'})
+    plt.title("Bag-Level Attention (A_2)")
+    plt.xlabel("Bags (Tokens)")
+    plt.ylabel("Superbags (Sequences)")
+    plt.yticks(ticks=np.arange(1) + 0.5, labels=["Superbag 0"], rotation=0)
+    plt.xticks(ticks=np.arange(len(Seq_ids)) + 0.5, labels=Seq_ids, rotation=0)
+
+    plt.tight_layout()
+    plt.savefig(img_io, format='png', dpi=300, bbox_inches='tight')
+    plt.close()
+
+    img_io.seek(0)
+    encoded_img = base64.b64encode(img_io.read()).decode('utf-8')
+    return encoded_img
 
 def one_hot_encode(value, valid_values):
     if value not in valid_values:

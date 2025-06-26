@@ -152,4 +152,5 @@ def get_new_antivirus(generator,DTI_model, esm_model, esm_alphabet, new_virus, c
                         drug_7+=1
                         best_drugs.append((smiles,output.item()))
                         
+    best_drugs = sorted(best_drugs, key=lambda x: x[1], reverse=True)[:5]
     return best_drugs         

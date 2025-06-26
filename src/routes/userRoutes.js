@@ -1,8 +1,57 @@
 import { Router } from "express";
-import { predictHost,predictAntivirus,topAntivirus ,generateAntiVirus,align} from "../controllers/userController.js";
+import { predictHost, predictAntivirus, topAntivirus, predictHost_ML ,generateAntiVirus,align} from "../controllers/userController.js";
 import { auth } from "../middlewares/auth.js";
 import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
+
+/**
+ * @swagger
+ * /user/predictHost-ML:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Predict host (human or non-human) using a machine learning model from a virus sequence
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Upload a FASTA file containing the virus sequence
+ *     responses:
+ *       200:
+ *         description: Host prediction result using ML model
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: success
+ *               data:
+ *                 prediction: [1]
+ *                 probability: [0.987654321]
+ *                 img: "base64_encoded_image_string"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: fail
+ *               message: Token not valid
+ *       404:
+ *         description: No user found
+ *         content:
+ *           application/json:
+ *             example:
+ *               status: fail
+ *               message: No user found
+ */
 
 /**
  * @swagger
@@ -237,6 +286,7 @@ const upload = multer({ dest: 'uploads/' });
  *               message: No user found
  */
 
+
 /**
  * @swagger
  * /user/align:
@@ -317,7 +367,8 @@ const upload = multer({ dest: 'uploads/' });
  *               message: No user found
  */
 const userRouter = Router();
-userRouter.route('/predictHost').post(auth,upload.single('file'), predictHost);
+userRouter.route('/predictHost').post(auth, upload.single('file'), predictHost);
+userRouter.route('/predictHost-ML').post(auth, upload.single('file'), predictHost_ML);
 userRouter.route('/predictAntiVirus').post(auth, upload.single('file'), predictAntivirus);
 userRouter.route('/generateAntiVirus').post(auth, upload.single('file'), generateAntiVirus);
 userRouter.route('/topAntiVirus').post(auth, upload.single('file'), topAntivirus);

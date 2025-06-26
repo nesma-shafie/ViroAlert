@@ -2,7 +2,6 @@
 CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
     `username` VARCHAR(191) NOT NULL,
-    `name` VARCHAR(50) NOT NULL,
     `email` VARCHAR(191) NOT NULL,
     `password` VARCHAR(255) NOT NULL,
 
@@ -17,6 +16,16 @@ CREATE TABLE `WebTokens` (
     `userID` VARCHAR(191) NOT NULL,
     `token` VARCHAR(191) NOT NULL,
 
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `sequence` (
+    `id` VARCHAR(191) NOT NULL,
+    `label` VARCHAR(191) NOT NULL,
+    `sequence` TEXT NOT NULL,
+
+    UNIQUE INDEX `sequence_label_key`(`label`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

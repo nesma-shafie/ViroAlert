@@ -14,13 +14,13 @@ const features = [
     title: "ViroGen Core",
     icon: Brain,
     description: "Generate novel antiviral candidates using advanced deep learning algorithms and molecular modeling.",
-  
+
     href: "/classification",
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-100",
     textColor: "text-purple-700",
-    x:  "-22rem",
-    y:  "-12rem",
+    x: "-22rem",
+    y: "-12rem",
   },
   {
     title: "DTI",
@@ -32,13 +32,13 @@ const features = [
     bgColor: "bg-green-100",
     textColor: "text-green-700",
     x: "22rem",
-    y:  "-12rem",
+    y: "-12rem",
   },
   {
     title: "Alignment",
     icon: Dna,
     description: "Analyze viral protein similarities and evolutionary patterns across sequences.",
-  
+
     href: "/alignment",
     color: "from-sky-500 via-cyan-500 to-teal-500",
     bgColor: "bg-cyan-100",
@@ -54,19 +54,19 @@ const features = [
     color: "from-orange-500 to-red-500",
     bgColor: "bg-orange-100",
     textColor: "text-orange-700",
-    x:  "22rem",
-    y:  "12rem",
+    x: "22rem",
+    y: "12rem",
   },
   {
     title: "Report",
     icon: Newspaper,
     description: "Generate comprehensive reports on antiviral candidate evaluation and analysis.",
-   
+
     href: "/report",
     color: "from-pink-800 to-rose-500",
-      bgColor: "bg-rose-100",
+    bgColor: "bg-rose-100",
     textColor: "text-rose-700",
-    x:  "0rem",
+    x: "0rem",
     y: "24rem",
   },
 ]
@@ -216,17 +216,16 @@ export default function FeaturesPage() {
                       width:
                         Math.sqrt(
                           Math.pow(Number.parseFloat(xPos.replace("rem", "")) * 16, 2) +
-                            Math.pow(Number.parseFloat(yPos.replace("rem", "")) * 16, 2),
+                          Math.pow(Number.parseFloat(yPos.replace("rem", "")) * 16, 2),
                         ) / 2,
                       height: "2px",
                       background: "linear-gradient(90deg, rgba(34, 197, 94, 0.5) 0%, transparent 100%)",
-                      transform: `translate(-50%, -50%) rotate(${
-                        Math.atan2(
-                          Number.parseFloat(yPos.replace("rem", "")),
-                          Number.parseFloat(xPos.replace("rem", "")),
-                        ) *
+                      transform: `translate(-50%, -50%) rotate(${Math.atan2(
+                        Number.parseFloat(yPos.replace("rem", "")),
+                        Number.parseFloat(xPos.replace("rem", "")),
+                      ) *
                         (180 / Math.PI)
-                      }deg)`,
+                        }deg)`,
                     }}
                   />
                 )}

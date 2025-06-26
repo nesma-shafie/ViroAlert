@@ -83,27 +83,68 @@ def test_one_virus(model,ft_model,datas,ids,seq_ids,labels=None):
         Y_prob, Y_hat, A, A_2 =model(embeddings,ids,seq_ids)         
     return Y_prob, Y_hat, A, A_2 
 
-def visualize_attention_2d_heatmaps(A, A_2, Seq_ids, super_ids):
+def visualize_attention_2d_heatmaps(A, A_2, Seq_ids, super_ids, save_path=None, cmap='viridis', annot=False, 
+                                normalize=True, threshold=0.1, title_prefix="Attention Heatmap", 
+                                x_tick_step=10, figsize=(16, 8)):
+    # Convert to numpy if not already
+    A = np.array(A) if not isinstance(A, np.ndarray) else A
+    A_2 = np.array(A_2) if not isinstance(A_2, np.ndarray) else A_2
+
+    # Shape validation
+    if A.ndim != 2 or A_2.ndim != 2:
+        raise ValueError("A and A_2 must be 2D arrays")
+    n_bags, n_instances = A.shape
+    
+    # Normalize attention weights
+    if normalize:
+        A = np.clip(A, 0, None)
+        A_max = np.max(A) if np.max(A) > 0 else 1.0
+        A = A / A_max if A_max > 0 else A
+
+        A_2 = np.clip(A_2, 0, None)
+        A_2_max = np.max(A_2) if np.max(A_2) > 0 else 1.0
+        A_2 = A_2 / A_2_max if A_2_max > 0 else A_2
+
+    # Create figure with two subplots and a bar plot
     img_io = BytesIO()
+    plt.figure(figsize=figsize)
+    A_2_ = np.array(A_2).reshape(-1)     # Ensure A_2 is 1D with shape (7,)
+    combined_A = A * A_2_[:, np.newaxis]  # Multiply each row of A by the corresponding A_2 weight
+    # Plot instance-level attention heatmap
+    plt.subplot(2, 2, 1)
+    sns.heatmap(A_2, cmap=cmap, annot=annot, fmt='.2f', cbar_kws={'label': 'Attention Weight'},
+                xticklabels=Seq_ids)
+    plt.title(f"{title_prefix} - Bag-Level (A_2)")
+    plt.xlabel("Sequence IDs")
+    plt.ylabel("Virus IDs")
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(rotation=0, fontsize=10)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
 
-    plt.figure(figsize=(12, 6))
+    global_max_idx_2 = np.unravel_index(np.argmax(A_2), A_2.shape)
+    plt.scatter(global_max_idx_2[1] + 0.5, global_max_idx_2[0] + 0.5, color='red', s=100, label='Max Sequence per Virus', zorder=5)
+    plt.legend()
 
-    # Instance-level attention heatmap
-    plt.subplot(1, 2, 1)
-    sns.heatmap(A, cmap="viridis", cbar_kws={'label': 'Attention Weight'})
-    plt.title("Instance-Level Attention (A)")
-    plt.xlabel("Instances (Tokens)")
-    plt.ylabel("Bags (Sequences)")
-    plt.yticks(ticks=np.arange(len(Seq_ids)) + 0.5, labels=Seq_ids, rotation=0)
 
-    # Bag-level attention heatmap
-    plt.subplot(1, 2, 2)
-    sns.heatmap(A_2, cmap="viridis", cbar_kws={'label': 'Attention Weight'})
-    plt.title("Bag-Level Attention (A_2)")
-    plt.xlabel("Bags (Tokens)")
-    plt.ylabel("Superbags (Sequences)")
-    plt.yticks(ticks=np.arange(1) + 0.5, labels=["Superbag 0"], rotation=0)
-    plt.xticks(ticks=np.arange(len(Seq_ids)) + 0.5, labels=Seq_ids, rotation=0)
+    # Plot bag-level attention heatmap
+    plt.subplot(2, 2, 2)
+    sns.heatmap(combined_A, cmap=cmap, annot=annot, fmt='.2f', cbar_kws={'label': 'Attention Weight'},
+                yticklabels=Seq_ids)
+    plt.title(f"{title_prefix} - Instance-Level (A)")
+    plt.xlabel("Tokens (Instances)")
+    plt.ylabel("Sequence IDs")
+    plt.xticks(np.arange(0, n_instances, x_tick_step), rotation=45, ha='right', fontsize=8)
+    plt.yticks(rotation=0, fontsize=10)
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.7)
+
+    # Highlight global max attention and per-sequence max attention
+    global_max_idx = np.unravel_index(np.argmax(A), A.shape)
+    # plt.scatter(global_max_idx[1] + 0.5, global_max_idx[0] + 0.5, color='red', s=100, label='Global Max', zorder=5)
+    for i in range(n_bags):
+        seq_max_idx = np.argmax(combined_A[i, :])
+        plt.scatter(seq_max_idx + 0.5, i + 0.5, color='yellow', s=50, label='Max Subsequence per Sequence' if i == 0 else "", zorder=5)
+    plt.legend()
+    # Highlight global max attention
 
     plt.tight_layout()
     plt.savefig(img_io, format='png', dpi=300, bbox_inches='tight')

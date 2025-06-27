@@ -132,7 +132,14 @@ const align = async (req, res) => {
     const fileName = req.file.originalname;
 
     // form.append('file', fs.createReadStream(filePath), fileName);
-    input_sequence = fs.readFileSync(filePath, 'utf8').trim();
+    let fileContent = fs.readFileSync(filePath, 'utf8').trim();
+    if (fileContent.startsWith('>')) {
+      // Remove the first line (FASTA header)
+      input_sequence = fileContent.split('\n').slice(1).join('').trim();
+    } else {
+      input_sequence = fileContent;
+    }
+
   }
 
   // If sequences are provided manually (and not file)

@@ -1,13 +1,37 @@
+"use client"
 
-"use client";
+import { useEffect, useState } from "react"
+import Typewriter from "typewriter-effect"
+import { Card, CardContent } from "@/components/ui/card"
+import { BrainCog, ShieldCheck, FlaskConical } from "lucide-react"
 
-import Typewriter from "typewriter-effect";
-import { Card, CardContent } from "@/components/ui/card";
-import { BrainCog, ShieldCheck, FlaskConical } from "lucide-react";
+const iconProps = { className: "w-6 h-6 text-white" }
 
-const iconProps = { className: "w-6 h-6 text-white" };
+interface Particle {
+  id: number
+  left: string
+  top: string
+  duration: string
+  delay: string
+}
 
 export default function AboutPage() {
+  const [particles, setParticles] = useState<Particle[]>([])
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+    // Generate particles only on client side to avoid hydration mismatch
+    const generatedParticles = [...Array(20)].map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      duration: `${3 + Math.random() * 4}s`,
+      delay: `${Math.random() * 2}s`,
+    }))
+    setParticles(generatedParticles)
+  }, [])
+
   const features = [
     {
       icon: BrainCog,
@@ -27,37 +51,42 @@ export default function AboutPage() {
       description:
         "Utilizes Drug-Target Interaction (DTI) models to rank generated molecules by biological efficacy and identify top-performing commercial antivirals.",
     },
-  ];
+  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-cyan-900 relative overflow-hidden">
       {/* Enhanced Animated Background Grid */}
       <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
             linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '50px 50px',
-          animation: 'grid-move 20s linear infinite'
-        }}></div>
+            backgroundSize: "50px 50px",
+            animation: "grid-move 20s linear infinite",
+          }}
+        ></div>
       </div>
 
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animation: `float ${3 + Math.random() * 4}s ease-in-out infinite`,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          ></div>
-        ))}
-      </div>
+      {/* Floating Particles - Only render on client */}
+      {isClient && (
+        <div className="absolute inset-0 overflow-hidden">
+          {particles.map((particle) => (
+            <div
+              key={particle.id}
+              className="absolute w-1 h-1 bg-cyan-400 rounded-full opacity-60"
+              style={{
+                left: particle.left,
+                top: particle.top,
+                animation: `float ${particle.duration} ease-in-out infinite`,
+                animationDelay: particle.delay,
+              }}
+            ></div>
+          ))}
+        </div>
+      )}
 
       {/* Enhanced Scientific pattern background */}
       <div className="absolute inset-0 opacity-20">
@@ -99,10 +128,10 @@ export default function AboutPage() {
               <div className="space-y-4 relative">
                 {/* Enhanced glowing accent line */}
                 <div className="absolute -left-6 top-0 w-1 h-32 bg-gradient-to-b from-cyan-400 via-blue-500 to-indigo-600 shadow-lg shadow-cyan-400/50 animate-pulse"></div>
-                
+
                 {/* Glowing background for title */}
                 <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl blur-xl"></div>
-                
+
                 <h1 className="text-4xl lg:text-5xl font-bold leading-tight relative z-10 bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent">
                   <Typewriter
                     options={{
@@ -116,9 +145,8 @@ export default function AboutPage() {
                 </h1>
 
                 <p className="text-gray-300 text-lg leading-relaxed max-w-md relative z-10 drop-shadow-lg">
-                  ViroGen is an AI-powered platform designed to predict virus
-                  behavior, generate antiviral drug candidates, and evaluate
-                  their effectiveness.
+                  ViroGen is an AI-powered platform designed to predict virus behavior, generate antiviral drug
+                  candidates, and evaluate their effectiveness.
                 </p>
               </div>
             </div>
@@ -134,7 +162,7 @@ export default function AboutPage() {
 
               <div className="space-y-6">
                 {features.map((feature, index) => {
-                  const Icon = feature.icon;
+                  const Icon = feature.icon
                   return (
                     <Card
                       key={index}
@@ -158,7 +186,7 @@ export default function AboutPage() {
                         </div>
                       </CardContent>
                     </Card>
-                  );
+                  )
                 })}
               </div>
             </div>
@@ -173,20 +201,37 @@ export default function AboutPage() {
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(180deg); }
+          0%,
+          100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-20px) rotate(180deg);
+          }
         }
         @keyframes grid-move {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(50px, 50px); }
+          0% {
+            transform: translate(0, 0);
+          }
+          100% {
+            transform: translate(50px, 50px);
+          }
         }
         @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
         @keyframes spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
+          from {
+            transform: rotate(360deg);
+          }
+          to {
+            transform: rotate(0deg);
+          }
         }
         .animate-spin-slow {
           animation: spin-slow 8s linear infinite;
@@ -196,5 +241,5 @@ export default function AboutPage() {
         }
       `}</style>
     </div>
-  );
+  )
 }

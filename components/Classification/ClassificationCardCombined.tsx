@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 export default function ClassificationCardCombined({ ml, dl }: { ml: ModelResult; dl: ModelResult }) {
     return (
         <motion.div
-            className="bg-white rounded-2xl shadow-lg border p-6 max-w-[60%] mx-auto space-y-6"
+            className="bg-white rounded-2xl shadow-lg border p-6 max-w-full mx-auto space-y-6"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -19,7 +19,7 @@ export default function ClassificationCardCombined({ ml, dl }: { ml: ModelResult
                 <p className="text-gray-700 text-lg">
                     Likelihood of Human Adaptation:{" "}
                     <span className="font-bold text-green-600">
-                        {ml.confidence.toFixed(1)}%
+                        {Number(ml.confidence.toFixed(1)) === 0 ? `${ml.confidence.toFixed(1)}% (Safe)` : `${ml.confidence.toFixed(1)}%`}
                     </span>
                 </p>
             </motion.div>
@@ -36,21 +36,18 @@ export default function ClassificationCardCombined({ ml, dl }: { ml: ModelResult
                 <p className="text-gray-700 text-lg mb-4">
                     Likelihood of Human Adaptation:{" "}
                     <span className="font-bold text-green-600">
-                        {dl.confidence.toFixed(1)}%
+                        {Number(dl.confidence.toFixed(1)) === 0 ? `${dl.confidence.toFixed(1)}% (Safe)` : `${dl.confidence.toFixed(1)}%`}
                     </span>
                 </p>
                 <div className="flex flex-col gap-4">
-                    {dl.explanationImages?.map((src, i) => (
-                        <motion.img
-                            key={i}
-                            src={src}
-                            alt={`Explanation ${i + 1} `}
-                            className="rounded-lg border w-full object-contain"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.6 + i * 0.2, duration: 0.4 }}
-                        />
-                    ))}
+                    <motion.img
+                        src={`data:image/png;base64,${dl.explanationImages}`}
+                        alt={`DeepLearning Explanation `}
+                        className="rounded-lg border w-full object-contain"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.4 }}
+                    />
                 </div>
             </motion.div>
         </motion.div>

@@ -18,12 +18,11 @@ import {
 
 const features = [
   {
-    title: "ViroGen Core",
+    title: "Virus Classification",
     icon: Brain,
     description:
-      "Generate novel antiviral candidates using advanced deep learning algorithms and molecular modeling.",
-
-    href: "/classification",
+      "Classify Human Adaptive sequences.",
+    href: "/upload-virus?flag=3",
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-100",
     textColor: "text-purple-700",
@@ -34,7 +33,6 @@ const features = [
     title: "DTI",
     icon: ShieldCheck,
     description: "Predict drug-target interactions for known antivirals.",
-
     href: "/DTI",
     color: "from-green-500 to-emerald-500",
     bgColor: "bg-green-100",
@@ -47,7 +45,6 @@ const features = [
     icon: Dna,
     description:
       "Advanced viral sequence alignment and similarity analysis.",
-
     href: "/upload-virus?flag=2",
     color: "from-sky-500 via-cyan-500 to-teal-500",
     bgColor: "bg-cyan-100",
@@ -58,8 +55,7 @@ const features = [
   {
     title: "Design Antivirals",
     icon: Brush,
-       description: "Upload a sequence to generate effective antivirals.",
-
+    description: "Upload a sequence to generate effective antivirals.",
     href: "/upload-virus?flag=0",
     color: "from-orange-500 to-red-500",
     bgColor: "bg-orange-100",
@@ -69,10 +65,8 @@ const features = [
   },
   {
     title: "Find Known Antivirals",
-       description: "Get top-matched antivirals for a selected virus.",
-
+    description: "Get top-matched antivirals for a selected virus.",
     icon: Newspaper,
-
     href: "/upload-virus?flag=1",
     color: "from-pink-800 to-rose-500",
     bgColor: "bg-rose-100",
@@ -140,7 +134,6 @@ export default function FeaturesPage() {
           <div className="text-center">
             <Brain className="w-10 h-10 md:w-16 md:h-16 mx-auto mb-2" />
             <div>ViroGen</div>
-            <div className="text-sm font-normal opacity-80">Core</div>
           </div>
 
           {/* Pulsing rings */}
@@ -244,21 +237,20 @@ export default function FeaturesPage() {
                             Number.parseFloat(xPos.replace("rem", "")) * 16,
                             2
                           ) +
-                            Math.pow(
-                              Number.parseFloat(yPos.replace("rem", "")) * 16,
-                              2
-                            )
+                          Math.pow(
+                            Number.parseFloat(yPos.replace("rem", "")) * 16,
+                            2
+                          )
                         ) / 2,
                       height: "2px",
                       background:
                         "linear-gradient(90deg, rgba(34, 197, 94, 0.5) 0%, transparent 100%)",
-                      transform: `translate(-50%, -50%) rotate(${
-                        Math.atan2(
-                          Number.parseFloat(yPos.replace("rem", "")),
-                          Number.parseFloat(xPos.replace("rem", ""))
-                        ) *
+                      transform: `translate(-50%, -50%) rotate(${Math.atan2(
+                        Number.parseFloat(yPos.replace("rem", "")),
+                        Number.parseFloat(xPos.replace("rem", ""))
+                      ) *
                         (180 / Math.PI)
-                      }deg)`,
+                        }deg)`,
                     }}
                   />
                 )}

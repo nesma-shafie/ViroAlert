@@ -155,11 +155,10 @@ export default function SequenceMatchViewer() {
                           onClick={() => setSelectedMatch(match)}
                           onMouseEnter={() => setHoveredIndex(idx)}
                           onMouseLeave={() => setHoveredIndex(null)}
-                          className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                            match === selectedMatch
+                          className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${match === selectedMatch
                               ? "border-blue-500 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-lg transform scale-[1.02]"
                               : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-md hover:transform hover:scale-[1.01]"
-                          }`}
+                            }`}
                         >
                           <div className="flex items-center justify-between mb-3">
                             <Badge
@@ -249,18 +248,18 @@ export default function SequenceMatchViewer() {
   );
 }
 // Enhanced alignment viewer with color coding and better visualization
-function EnhancedAlignmentView({ 
-  seq1, 
-  seq2, 
-  matchline 
-}: { 
-  seq1: string; 
-  seq2: string; 
-  matchline: string; 
+function EnhancedAlignmentView({
+  seq1,
+  seq2,
+  matchline
+}: {
+  seq1: string;
+  seq2: string;
+  matchline: string;
 }) {
   const chunkSize = 60;
   const chunks = [];
-  
+
   for (let i = 0; i < seq1.length; i += chunkSize) {
     chunks.push({
       seq1: seq1.slice(i, i + chunkSize),
@@ -296,13 +295,13 @@ function EnhancedAlignmentView({
             <div className="text-gray-500 text-[10px] mb-1">
               Position: {chunk.position + 1} - {chunk.position + chunk.seq1.length}
             </div>
-            
+
             {/* Query sequence */}
             <div className="flex items-center space-x-2">
               <span className="text-gray-400 w-12 text-[10px]">Query:</span>
               <div className="flex">
                 {chunk.seq1.split('').map((char, i) => {
-                  const isMatch = chunk.matchline[i] === '|' ;
+                  const isMatch = chunk.matchline[i] === '|';
                   return (
                     <span
                       key={i}
@@ -326,9 +325,9 @@ function EnhancedAlignmentView({
                     className={`px-[1px] py-[1px] ${getMatchlineChar(char)}`}
                     title={
                       char === '|' ? 'Exact match' :
-                      char === ':' ? 'changed residues' :
-                      char === '.' ? 'skipped residues' :
-                      'No similarity'
+                        char === ':' ? 'changed residues' :
+                          char === '.' ? 'skipped residues' :
+                            'No similarity'
                     }
                   >
                     {char}
@@ -342,7 +341,7 @@ function EnhancedAlignmentView({
               <span className="text-gray-400 w-12 text-[10px]">Subj:</span>
               <div className="flex">
                 {chunk.seq2.split('').map((char, i) => {
-                  const isMatch = chunk.matchline[i] === '|' ;
+                  const isMatch = chunk.matchline[i] === '|';
                   return (
                     <span
                       key={i}
@@ -358,7 +357,7 @@ function EnhancedAlignmentView({
 
             {/* Statistics for this chunk */}
             <div className="text-[10px] text-gray-500 pt-1 border-t border-gray-700/50">
-              Matches: {chunk.matchline.split('').filter(c => c === '|').length}/{chunk.matchline.length} 
+              Matches: {chunk.matchline.split('').filter(c => c === '|').length}/{chunk.matchline.length}
               ({((chunk.matchline.split('').filter(c => c === '|').length / chunk.matchline.length) * 100).toFixed(1)}%)
             </div>
           </div>

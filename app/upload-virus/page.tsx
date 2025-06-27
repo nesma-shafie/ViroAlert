@@ -1,6 +1,5 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
@@ -8,15 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import axios from "axios";
-import { useFormContext } from "@/context/FormContext";
-import { Drug } from "@/types";
-import { set } from "react-hook-form";
+import { Drug, ModelResult } from "@/types";
+import LoadingButton from "@/components/LoadingButton";
+import FormButton from "@/components/FormButton";
 
 export default function uploadvirus() {
   const [virus, setVirus] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { drugs, setdrugs } = useFormContext();
   const router = useRouter();
   const searchParams = useSearchParams();
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -34,6 +32,7 @@ export default function uploadvirus() {
       const token = localStorage.getItem("token");
       //flag
       let value;
+      // Alignment
       if (searchParams.get("flag") === "2") {
         const response = await axios.post(`${baseURL}/user/align`, form, {
           headers: {
@@ -44,7 +43,6 @@ export default function uploadvirus() {
         const input = response.data?.input;
         const closest_matches = response.data?.closest_matches;
         //set input and clostest matches to send them to alignment page without local storage
-
         const sequenceData = {
           input: input,
           closest_matches: closest_matches,
@@ -53,9 +51,8 @@ export default function uploadvirus() {
         localStorage.setItem("sequenceData", JSON.stringify(sequenceData));
         router.push(`/alignment`);
         return;
-        // Option 2: Use context or global state to share sequenceData
-        // router.push("/alignment");
       }
+      // Anti-Virus Prediction
       if (searchParams.get("flag") === "1") {
         const response = await axios.post(
           `${baseURL}/user/topAntiVirus`,
@@ -67,8 +64,17 @@ export default function uploadvirus() {
             },
           }
         );
-        value = response.data?.data?.top_smiles;
-      } else if (searchParams.get("flag") === "0") {
+        const drugs: Drug[] = response.data?.smiles.map((val: [string, number]) => ({
+          smiles: val[0],
+          PIC50: val[1],
+        }));
+        localStorage.removeItem("drugs");
+        localStorage.setItem("drugs", JSON.stringify(drugs));
+        router.push("/drug");
+        return;
+      }
+      // Anti-Virus Generation
+      else if (searchParams.get("flag") === "0") {
         const response = await axios.post(
           `${baseURL}/user/generateAntiVirus`,
           form,
@@ -79,19 +85,56 @@ export default function uploadvirus() {
             },
           }
         );
-        value = response.data?.data?.drugs;
+        const drugs: Drug[] = response.data?.smiles.map((val: [string, number]) => ({
+          smiles: val[0],
+          PIC50: val[1],
+        }));
+        console.log("Drugs:", drugs);
+        localStorage.removeItem("drugs");
+        localStorage.setItem("drugs", JSON.stringify(drugs));
+        router.push("/drug");
+        return;
+      }
+      // Host Prediction
+      else if (searchParams.get("flag") === "3") {
+        // Deep Learning Prediction
+        const dlres = await axios.post(
+          `${baseURL}/user/predictHost`,
+          form,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const DeepLearningResult: ModelResult = {
+          confidence: dlres.data?.probability,
+          explanationImages: dlres.data?.img,
+          type: "dl",
+        };
+        localStorage.setItem("DeepLearningResult", JSON.stringify(DeepLearningResult));
+        // Machine Learning Prediction
+        const mlres = await axios.post(
+          `${baseURL}/user/predictHost-ML`,
+          form,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const MachineLearningResult: ModelResult = {
+          confidence: mlres.data?.probability,
+          type: "ml",
+        };
+
+        localStorage.setItem("MachineLearningResult", JSON.stringify(MachineLearningResult));
+        router.push(`/classification`);
+        return;
       }
 
-      const formattedValue: Drug[] = value.map((val: [string, number]) => ({
-        smiles: val[0],
-        PIC50: val[1],
-      }));
-      if (formattedValue !== undefined) {
-        setdrugs(formattedValue);
-        router.push("/drug");
-      } else {
-        alert("No prediction value returned.");
-      }
     } catch (error) {
       console.error(error);
       if (typeof error === "object" && error !== null && "response" in error) {
@@ -139,49 +182,20 @@ export default function uploadvirus() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <div className="flex justify-center">
                 {isLoading ? (
-                  <div className="flex items-center justify-center w-56 h-10">
-                    <svg
-                      className="animate-spin h-6 w-6 text-virogen-blue"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      ></path>
-                    </svg>
-                    <span className="ml-2 text-virogen-blue font-semibold">
-                      Loading...
-                    </span>
-                  </div>
-                ) : searchParams.get("flag") === "2" ? (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-56 virogen-blue hover:virogen-light-blue text-white"
-                  >
-                    Align{" "}
-                  </Button>
+                  <LoadingButton />
                 ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-56 virogen-blue hover:virogen-light-blue text-white"
-                  >
-                    {searchParams.get("flag") === "1"
-                      ? "Get Top Anti-Viruses"
-                      : "Get Anti-Viruses"}
-                  </Button>
+                  <FormButton
+                    isLoading={isLoading}
+                    text={
+                      searchParams.get("flag") === "3"
+                        ? "Predict Host"
+                        : searchParams.get("flag") === "2"
+                          ? "Align"
+                          : searchParams.get("flag") === "1"
+                            ? "Get Top Anti-Viruses"
+                            : "Get Anti-Viruses"
+                    }
+                  />
                 )}
               </div>
             </motion.div>

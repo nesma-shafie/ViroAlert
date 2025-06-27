@@ -5,11 +5,11 @@ import { FormProvider } from '@/context/FormContext';
 
 export const metadata: Metadata = {
   title: 'Virogen',
-  description: 'Virogen - Your app description here',
+  description: 'Virogen - AI-Powered Viral Sequence Analysis Tool',
   icons: {
     icon: '/v.png', // This sets the favicon in the browser tab
   },
- 
+
 };
 
 import { ReactNode } from 'react';

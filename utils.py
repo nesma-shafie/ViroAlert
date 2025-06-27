@@ -243,7 +243,7 @@ def protein_graph(model, alphabet, seq, threshold=0.5, window_size=1000, stride=
 
     for start_idx, subseq in windows:
         contact_map = esm_model_func(model, alphabet, subseq)[0]  # shape: [L_window, L_window]
-        L_win = len(subseq)
+        L_win =  contact_map.shape[0]
         for i in range(L_win):
             for j in range(L_win):
                 prob = contact_map[i, j].item()

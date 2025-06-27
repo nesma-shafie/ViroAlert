@@ -94,7 +94,12 @@ export default function uploadvirus() {
       }
     } catch (error) {
       console.error(error);
-      alert("Failed to get prediction. Please try again.");
+      if (typeof error === "object" && error !== null && "response" in error) {
+        // @ts-ignore
+        alert(`Failed to get prediction. ${error.response?.data?.message || error.message}.`);
+      } else {
+        alert("Failed to get prediction. An unknown error occurred.");
+      }
     }
     setIsLoading(false);
   };

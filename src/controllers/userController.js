@@ -132,7 +132,7 @@ const align = async (req, res) => {
     const fileName = req.file.originalname;
 
     // form.append('file', fs.createReadStream(filePath), fileName);
-    input_sequence = fs.readFileSync(filePath + fileName, 'utf8').trim();
+    input_sequence = fs.readFileSync(filePath, 'utf8').trim();
   }
 
   // If sequences are provided manually (and not file)
@@ -151,8 +151,15 @@ const align = async (req, res) => {
       const targetKmers = getKmers(entry.sequence, 5);
       const jaccard = jaccardSimilarity(inputKmers, targetKmers);
       return { ...entry, jaccard };
-    })
-    .filter(entry => entry.jaccard >= 0.2);
+    });
+    let sim=0.2;
+     let    finalfiltered= filtered.filter(entry => entry.jaccard >= 0.2);
+
+    while(filtered.length<5)
+   { 
+    sim -= 0.05;
+    finalfiltered= filtered.filter(entry => entry.jaccard >= sim);
+  }
   console.log(filtered.length);
   // Sort by Jaccard descending
   filtered.sort((a, b) => b.jaccard - a.jaccard);

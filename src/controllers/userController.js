@@ -172,7 +172,7 @@ const align = async (req, res) => {
       // Remove the first line (FASTA header)
       input_sequence = fileContent.split('\n').slice(1).join('').trim();
     } else {
-      input_sequence = fileContent;
+      input_sequence = req.virus;
     }
 
   }

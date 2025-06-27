@@ -45,7 +45,7 @@ export default function Navbar() {
           const updated = [...prev]
           const loginIndex = updated.findIndex((link) => link.href === "/login")
           if (loginIndex !== -1) {
-            updated.splice(loginIndex, 1, { href: "/features", label: "Features" })
+            updated.splice(loginIndex, 1, { href: "/home", label: "home" })
             updated.push({ href: "/logout", label: "Logout" })
             updated.push({
               href: "",
@@ -76,7 +76,7 @@ export default function Navbar() {
         setNavLinks((prev) => {
           const updated = [...prev]
           const logoutIndex = updated.findIndex((link) => link.href === "/logout")
-          const featureIndex = updated.findIndex((link) => link.href === "/features")
+          const featureIndex = updated.findIndex((link) => link.href === "/home")
           const profileIndex = updated.findIndex((link) => link.href === "")
 
           if (logoutIndex !== -1) {

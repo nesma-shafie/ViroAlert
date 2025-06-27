@@ -76,7 +76,7 @@ const features = [
   },
 ];
 
-export default function FeaturesPage() {
+export default function HomePage() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 

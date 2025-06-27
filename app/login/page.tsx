@@ -57,7 +57,7 @@ export default function AuthPage() {
         localStorage.setItem("token", response.data.data.token);
         localStorage.setItem("auth", "true");
         localStorage.setItem("username", username);
-        router.push("/features");
+        router.push("/home");
       } else {
         alert(`Signup failed, ${response.data.data.message}`);
       }
@@ -91,7 +91,7 @@ export default function AuthPage() {
         localStorage.setItem("token", response.data.data.token);
         localStorage.setItem("auth", "true");
         localStorage.setItem("username", username);
-        router.push("/features");
+        router.push("/home");
       } else {
         alert("Login failed. Please check your credentials.");
       }

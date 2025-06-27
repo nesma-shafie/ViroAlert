@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import axios from "axios";
-import { Drug, ModelResult } from "@/types";
 import LoadingButton from "@/components/LoadingButton";
 import FormButton from "@/components/FormButton";
+import { AntiVirusGeneration, AntiVirusRecommendation, HostPrediction, virusAlignment } from "@/actions";
 
 export default function uploadvirus() {
   const [virus, setVirus] = useState("");
@@ -18,123 +17,44 @@ export default function uploadvirus() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  async function VirusUpload(flag: string, virus: string, file: File | null) {
     if (!virus && !file) {
       alert("Please enter a virus sequence or upload a FASTA file.");
       return;
     }
+    const form = new FormData();
+    if (file) form.append("file", file);
+    else form.append("virus", virus);
+    // Alignment
+    if (flag === "2") {
+      await virusAlignment(form);
+      router.push(`/alignment`);
+      return;
+    }
+    // Anti-Virus Prediction
+    if (flag === "1") {
+      await AntiVirusRecommendation(form);
+      router.push(`/drug`);
+      return;
+    }
+    // Anti-Virus Generation
+    else if (flag === "0") {
+      await AntiVirusGeneration(form);
+      router.push(`/drug`);
+      return;
+    }
+    // Host Prediction
+    else if (flag === "3") {
+      await HostPrediction(form);
+      router.push(`/classification`);
+      return;
+    }
+  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
     try {
-      const form = new FormData();
-      if (file) form.append("file", file);
-      else form.append("virus", virus);
-      const token = localStorage.getItem("token");
-      //flag
-      let value;
-      // Alignment
-      if (searchParams.get("flag") === "2") {
-        const response = await axios.post(`${baseURL}/user/align`, form, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const input = response.data?.input;
-        const closest_matches = response.data?.closest_matches;
-        //set input and clostest matches to send them to alignment page without local storage
-        const sequenceData = {
-          input: input,
-          closest_matches: closest_matches,
-        };
-        //set sequenceData to local storage
-        localStorage.setItem("sequenceData", JSON.stringify(sequenceData));
-        router.push(`/alignment`);
-        return;
-      }
-      // Anti-Virus Prediction
-      if (searchParams.get("flag") === "1") {
-        const response = await axios.post(
-          `${baseURL}/user/topAntiVirus`,
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const drugs: Drug[] = response.data?.smiles.map((val: [string, number]) => ({
-          smiles: val[0],
-          PIC50: val[1],
-        }));
-        localStorage.removeItem("drugs");
-        localStorage.setItem("drugs", JSON.stringify(drugs));
-        router.push("/drug");
-        return;
-      }
-      // Anti-Virus Generation
-      else if (searchParams.get("flag") === "0") {
-        const response = await axios.post(
-          `${baseURL}/user/generateAntiVirus`,
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const drugs: Drug[] = response.data?.smiles.map((val: [string, number]) => ({
-          smiles: val[0],
-          PIC50: val[1],
-        }));
-        console.log("Drugs:", drugs);
-        localStorage.removeItem("drugs");
-        localStorage.setItem("drugs", JSON.stringify(drugs));
-        router.push("/drug");
-        return;
-      }
-      // Host Prediction
-      else if (searchParams.get("flag") === "3") {
-        // Deep Learning Prediction
-        const dlres = await axios.post(
-          `${baseURL}/user/predictHost`,
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const DeepLearningResult: ModelResult = {
-          confidence: dlres.data?.probability,
-          explanationImages: dlres.data?.img,
-          type: "dl",
-        };
-        localStorage.setItem("DeepLearningResult", JSON.stringify(DeepLearningResult));
-        // Machine Learning Prediction
-        const mlres = await axios.post(
-          `${baseURL}/user/predictHost-ML`,
-          form,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const MachineLearningResult: ModelResult = {
-          confidence: mlres.data?.probability,
-          type: "ml",
-        };
-
-        localStorage.setItem("MachineLearningResult", JSON.stringify(MachineLearningResult));
-        router.push(`/classification`);
-        return;
-      }
-
+      await VirusUpload(searchParams.get("flag") as string, virus, file);
     } catch (error) {
       console.error(error);
       if (typeof error === "object" && error !== null && "response" in error) {

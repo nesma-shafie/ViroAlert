@@ -14,9 +14,6 @@ import { TooltipContent } from "@radix-ui/react-tooltip";
 
 export default function SequenceMatchViewer() {
   const sequenceData = JSON.parse(localStorage.getItem("sequenceData") || "{}");
-  //delete from local storage
-  // localStorage.removeItem("sequenceData");
-  console.log("Sequence Data:", sequenceData);
   const [selectedMatch, setSelectedMatch] = useState(
     sequenceData.closest_matches[0]
   );

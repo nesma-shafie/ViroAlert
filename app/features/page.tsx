@@ -1,19 +1,27 @@
+"use client";
 
-"use client"
-
-import { motion, AnimatePresence } from "framer-motion"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Brush, Dna, ShieldCheck, Brain, Newspaper, ArrowRight, Sparkles } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Brush,
+  Dna,
+  ShieldCheck,
+  Brain,
+  Newspaper,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 
 const features = [
   {
     title: "ViroGen Core",
     icon: Brain,
-    description: "Generate novel antiviral candidates using advanced deep learning algorithms and molecular modeling.",
+    description:
+      "Generate novel antiviral candidates using advanced deep learning algorithms and molecular modeling.",
 
     href: "/classification",
     color: "from-purple-500 to-pink-500",
@@ -37,9 +45,10 @@ const features = [
   {
     title: "Alignment",
     icon: Dna,
-    description: "Analyze viral protein similarities and evolutionary patterns across sequences.",
+    description:
+      "Advanced viral sequence alignment and similarity analysis.",
 
-    href: "/alignment",
+    href: "/upload-virus?flag=2",
     color: "from-sky-500 via-cyan-500 to-teal-500",
     bgColor: "bg-cyan-100",
     textColor: "text-cyan-800",
@@ -47,10 +56,11 @@ const features = [
     y: "12rem",
   },
   {
-    title: "Generate Drug",
+    title: "Design Antivirals",
     icon: Brush,
-    description: "",
-    href: "/upload-virus",
+       description: "Upload a sequence to generate effective antivirals.",
+
+    href: "/upload-virus?flag=0",
     color: "from-orange-500 to-red-500",
     bgColor: "bg-orange-100",
     textColor: "text-orange-700",
@@ -58,29 +68,30 @@ const features = [
     y: "12rem",
   },
   {
-    title: "Report",
-    icon: Newspaper,
-    description: "Generate comprehensive reports on antiviral candidate evaluation and analysis.",
+    title: "Find Known Antivirals",
+       description: "Get top-matched antivirals for a selected virus.",
 
-    href: "/report",
+    icon: Newspaper,
+
+    href: "/upload-virus?flag=1",
     color: "from-pink-800 to-rose-500",
     bgColor: "bg-rose-100",
     textColor: "text-rose-700",
     x: "0rem",
     y: "24rem",
   },
-]
+];
 
 export default function FeaturesPage() {
-  const [hovered, setHovered] = useState<number | null>(null)
-  const [isMobile, setIsMobile] = useState(false)
+  const [hovered, setHovered] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 via-blue-100 to-slate-200 relative overflow-hidden">
@@ -92,17 +103,27 @@ export default function FeaturesPage() {
 
       {/* Header */}
       <div className="relative z-10 pt-24 pb-12 text-center px-4">
-        <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <Badge variant="outline" className="mb-4 border-cyan-600 text-cyan-700 bg-cyan-50">
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Badge
+            variant="outline"
+            className="mb-4 border-cyan-600 text-cyan-700 bg-cyan-50"
+          >
             <Sparkles className="w-4 h-4 mr-2" />
             AI-Powered Platform
           </Badge>
           <h1 className="text-4xl md:text-7xl font-extrabold text-gray-900 mb-8">
             ViroGen{" "}
-            <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">Platform</span>
+            <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">
+              Platform
+            </span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Revolutionary AI platform for virus analysis, drug discovery, and rapid antiviral development.
+            Revolutionary AI platform for virus analysis, drug discovery, and
+            rapid antiviral development.
           </p>
         </motion.div>
       </div>
@@ -129,10 +150,10 @@ export default function FeaturesPage() {
 
         {/* Feature Bubbles */}
         {features.map((feature, index) => {
-          const isActive = hovered === index
-          const Icon = feature.icon
-          const xPos = feature.x
-          const yPos = feature.y
+          const isActive = hovered === index;
+          const Icon = feature.icon;
+          const xPos = feature.x;
+          const yPos = feature.y;
 
           return (
             <motion.div
@@ -166,7 +187,11 @@ export default function FeaturesPage() {
                   >
                     <Icon className="w-5 h-5 md:w-8 md:h-8 text-white" />
                   </motion.div>
-                  <h3 className={`text-xs md:text-base font-bold ${feature.textColor} mb-1`}>{feature.title}</h3>
+                  <h3
+                    className={`text-xs md:text-base font-bold ${feature.textColor} mb-1`}
+                  >
+                    {feature.title}
+                  </h3>
 
                   {!isActive && (
                     <motion.p
@@ -215,23 +240,31 @@ export default function FeaturesPage() {
                     style={{
                       width:
                         Math.sqrt(
-                          Math.pow(Number.parseFloat(xPos.replace("rem", "")) * 16, 2) +
-                          Math.pow(Number.parseFloat(yPos.replace("rem", "")) * 16, 2),
+                          Math.pow(
+                            Number.parseFloat(xPos.replace("rem", "")) * 16,
+                            2
+                          ) +
+                            Math.pow(
+                              Number.parseFloat(yPos.replace("rem", "")) * 16,
+                              2
+                            )
                         ) / 2,
                       height: "2px",
-                      background: "linear-gradient(90deg, rgba(34, 197, 94, 0.5) 0%, transparent 100%)",
-                      transform: `translate(-50%, -50%) rotate(${Math.atan2(
-                        Number.parseFloat(yPos.replace("rem", "")),
-                        Number.parseFloat(xPos.replace("rem", "")),
-                      ) *
+                      background:
+                        "linear-gradient(90deg, rgba(34, 197, 94, 0.5) 0%, transparent 100%)",
+                      transform: `translate(-50%, -50%) rotate(${
+                        Math.atan2(
+                          Number.parseFloat(yPos.replace("rem", "")),
+                          Number.parseFloat(xPos.replace("rem", ""))
+                        ) *
                         (180 / Math.PI)
-                        }deg)`,
+                      }deg)`,
                     }}
                   />
                 )}
               </Card>
             </motion.div>
-          )
+          );
         })}
       </div>
 
@@ -243,9 +276,12 @@ export default function FeaturesPage() {
           transition={{ duration: 0.8, delay: 1.5 }}
           className="max-w-4xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Ready to Accelerate Your Research?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+            Ready to Accelerate Your Research?
+          </h2>
           <p className="text-xl text-gray-700 mb-8">
-            Join leading researchers using ViroGen to discover breakthrough treatments
+            Join leading researchers using ViroGen to discover breakthrough
+            treatments
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-3 text-lg hover:shadow-lg transition-all">
@@ -255,5 +291,5 @@ export default function FeaturesPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

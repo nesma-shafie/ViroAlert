@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
 
   type NavLink = {
     href: string;
@@ -20,7 +19,7 @@ export default function Navbar() {
   ]);
 
   const [isAuth, setIsAuth] = useState(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
+    if (typeof window !== "undefined" && window.localStorage&&localStorage.getItem("auth")) {
       return localStorage.getItem("auth") === "true";
     }
     return false;
@@ -95,15 +94,7 @@ export default function Navbar() {
     }
   }, [pathname]);
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage.removeItem("auth");
-      localStorage.removeItem("username");
-      setIsAuth(false);
-      router.push("/login");
-    }
-  };
-
+  
   return (
     <header className="bg-white text-black shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-1">

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import { FormProvider } from '@/context/FormContext';
-
+import Footer from '../components/Footer';
 export const metadata: Metadata = {
   title: 'Virogen',
   description: 'Virogen - AI-Powered Viral Sequence Analysis Tool',
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </FormProvider>
         </div>
-        {/* <Footer /> */}
+        <Footer />
       </body>
     </html>
   );

@@ -15,7 +15,7 @@ export default function ClassificationCardCombined({ ml, dl }: { ml: ModelResult
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
             >
-                <h2 className="text-2xl font-semibold text-blue-700 mb-2">Virus2Vec ML</h2>
+                <h2 className="text-2xl font-semibold text-virogen-blue mb-2">Virus2Vec ML</h2>
                 <p className="text-gray-700 text-lg">
                     Likelihood of Human Adaptation:{" "}
                     <span className="font-bold text-green-600">
@@ -32,7 +32,7 @@ export default function ClassificationCardCombined({ ml, dl }: { ml: ModelResult
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.5 }}
             >
-                <h2 className="text-2xl font-semibold text-blue-700 mb-2">ViroGen DL</h2>
+                <h2 className="text-2xl font-semibold text-virogen-blue mb-2">ViroGen DL</h2>
                 <p className="text-gray-700 text-lg mb-4">
                     Likelihood of Human Adaptation:{" "}
                     <span className="font-bold text-green-600">

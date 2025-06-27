@@ -14,7 +14,7 @@ export default function MoleculeItems({ drugs, title }: MoleculeItemsProps) {
             <motion.h1 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl  font-bold mb-6 text-center text-gray-800">💊 {title}</motion.h1>
+                className="text-4xl  font-bold mb-6 text-center text-gray-800">💊 <span className="bg-gradient-to-r from-cyan-600 to-blue-600 text-transparent bg-clip-text">{title}</span></motion.h1>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {drugs.map((drug, index) => (
                     <motion.div

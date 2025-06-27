@@ -79,13 +79,13 @@ export default function PredictAntivirusPage() {
         >
           <div className="text-center space-y-4">
             <motion.h1
-              className="text-5xl font-extrabold text-virogen-blue flex items-center justify-center gap-4"
+              className="text-4xl font-bold flex items-center justify-center gap-4 "
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <span className="text-5xl">🔬</span>
-              Drug Target Interaction
+              🔬
+            <span className="text-4xl bg-gradient-to-r from-cyan-600 to-blue-600 text-transparent bg-clip-text">Drug Target Interaction </span>
             </motion.h1>
             <motion.p
               className="text-lg text-gray-600 max-w-2xl mx-auto"

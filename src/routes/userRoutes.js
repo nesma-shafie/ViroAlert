@@ -290,7 +290,7 @@ const upload = multer({ dest: 'uploads/' });
 /**
  * @swagger
  * /user/align:
- *   get:
+ *   post:
  *     tags:
  *       - User
  *     summary: Align input sequence with known sequences and find closest matches
@@ -344,6 +344,15 @@ const upload = multer({ dest: 'uploads/' });
  *                         type: number
  *                         format: float
  *                         description: Alignment score
+ *                       alignedSeq1:
+ *                         type: string
+ *                         description: Aligned version of the input sequence
+ *                       alignedSeq2:
+ *                         type: string 
+ *                         description: Aligned version of the matched sequence
+ *                       matchLine:
+ *                         type: string 
+ *                         description: Line indicating matches between aligned sequences
  *             example:
  *               input: PQVTLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRW...
  *               closest_matches:
@@ -351,6 +360,9 @@ const upload = multer({ dest: 'uploads/' });
  *                   sequence: PQVTLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRW...
  *                   jaccard: 0.85
  *                   score: 92.5
+ *                   alignedSeq1: PQVTLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRW...
+ *                   alignedSeq2: PQVTLWQRPLVTIKIGGQLKEALL
+ *                   matchline: "|||||||||||"
  *       401:
  *         description: Unauthorized
  *         content:
@@ -372,7 +384,7 @@ userRouter.route('/predictHost-ML').post(auth, upload.single('file'), predictHos
 userRouter.route('/predictAntiVirus').post(auth, upload.single('file'), predictAntivirus);
 userRouter.route('/generateAntiVirus').post(auth, upload.single('file'), generateAntiVirus);
 userRouter.route('/topAntiVirus').post(auth, upload.single('file'), topAntivirus);
-userRouter.route('/align').get(auth,upload.single('file'), align)
+userRouter.route('/align').post(auth,upload.single('file'), align)
 
 
 

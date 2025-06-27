@@ -136,8 +136,8 @@ const align = async (req, res) => {
   }
 
   // If sequences are provided manually (and not file)
-  if (!req.file && req.body.seq1) {
-    input_sequence = req.body.seq1;
+  if (!req.file && req.body.virus) {
+    input_sequence = req.body.virus;
   }
   //get the sequence from the DB
   const inputKmers = getKmers(input_sequence, 5); // Can tune k
@@ -159,8 +159,8 @@ const align = async (req, res) => {
 
   // Step 2: Run alignment only on the top N from filtered
   const results = filtered.slice(0, 30).map(entry => {
-    const score = align2seq(input_sequence, entry.sequence); // fast version
-    return { label: entry.label, sequence: entry.sequence, jaccard: entry.jaccard, score };
+    const {alignedSeq1,alignedSeq2,matchLine,score} = align2seq(input_sequence, entry.sequence); // fast version
+    return { label: entry.label, sequence: entry.sequence, jaccard: entry.jaccard, score, alignedSeq1, alignedSeq2, matchLine };
   });
 
   // Sort by highest score (closest match first)

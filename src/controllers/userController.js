@@ -133,6 +133,14 @@ const align = async (req, res) => {
 
     // form.append('file', fs.createReadStream(filePath), fileName);
     let fileContent = fs.readFileSync(filePath, 'utf8').trim();
+    // Check for multiple FASTA headers
+    const headerCount = (fileContent.match(/^>/gm) || []).length;
+    if (headerCount > 1) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'FASTA file contains more than one sequence (multiple headers found). Please upload a file with a single sequence.'
+      });
+    }
     if (fileContent.startsWith('>')) {
       // Remove the first line (FASTA header)
       input_sequence = fileContent.split('\n').slice(1).join('').trim();

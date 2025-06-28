@@ -17,10 +17,14 @@ def read_virus(fasta_content) :
     return ''.join(line.strip() for line in lines if not line.startswith(">"))
 
 def one_hot_encode(value, valid_values):
-    if value not in valid_values:
-        value = valid_values[-1]
-    return [value == item for item in valid_values]
-
+   
+    encoded = []
+    for item in valid_values:
+        if value == item:
+            encoded.append(1)
+        else:
+            encoded.append(0)
+    return encoded
 
 def get_atom_features(atom):
     atom_symbols = [

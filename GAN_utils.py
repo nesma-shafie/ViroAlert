@@ -8,15 +8,14 @@ import torch
 import gc
 import pandas as pd
 import pickle
-from model import DrugTargetGNN
-import esm
-from model import  protein_graph_to_data, drug_graph_to_data
-from utils import smile_graph,protein_graph
+from DTI_model import DrugProteinDataset, custom_collate
+from DTI_model import  protein_graph_to_data, drug_graph_to_data
+from DTI_utils import smile_graph,protein_graph
 from tqdm import tqdm
 from torch.utils.data import DataLoader
+
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# from ViroGen.database_conn import conn
-from model import DrugProteinDataset, custom_collate
 
 
 def get_validity_metric(smiles):

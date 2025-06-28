@@ -1,20 +1,21 @@
 import numpy as np
 import fastapi
-import pandas as pd
 from fastapi import File,UploadFile,Form
 from fastapi.middleware.cors import CORSMiddleware
 import torch
 from gensim.models import FastText
-from model import GatedAttention,DrugTargetGNN
 import esm
 from typing import Optional
-from utils import read_virus,read_virus_seqs,test_one_virus,test_antivirus,test_top_antivirus,visualize_attention_2d_heatmaps
-from ML_model import Virus2Vec, get_predection_per_virus
 import argparse
 torch.serialization.add_safe_globals([argparse.Namespace])
+import joblib
+from DL_model import GatedAttention
+from DL_utils import read_virus_seqs,visualize_attention_2d_heatmaps, test_one_virus
+from DTI_model import DrugTargetGNN
+from DTI_utils import read_virus,test_antivirus,test_top_antivirus
+from ML_utils import Virus2Vec, get_predection_per_virus
 from GAN_utils import get_new_antivirus
 from GAN_model import Generator
-import joblib
 
 
 # CONSTANTS
@@ -39,21 +40,18 @@ smiles_characters = [
     '<SOS>',
     '<PAD>'
 ]
-
 char2idx = {ch: i for i, ch in enumerate(smiles_characters)}
 idx2char = {i: ch for i, ch in enumerate(smiles_characters)}
 vocab_size = len(smiles_characters)
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = GatedAttention(N_HEAD, ENCODER_N_LAYERS, EMBEDDING_SIZE, INTERMIDIATE_DIM).to(device)
-model.load_state_dict(torch.load(r"models\model_weights.pth", map_location=device))
+DL_model = GatedAttention(N_HEAD, ENCODER_N_LAYERS, EMBEDDING_SIZE, INTERMIDIATE_DIM).to(device)
+DL_model.load_state_dict(torch.load(r"models\model_weights.pth", map_location=device))
 ft_model = FastText.load(r"models\ft_skipgram.model")
 antivirus_model = DrugTargetGNN()
 antivirus_model.load_state_dict(torch.load(r"models\drug_target_model2.pth", map_location=device))
 esm_model, esm_alphabet=esm.pretrained.load_model_and_alphabet_local(r"models\esm1b_t33_650M_UR50S.pt")
 esm_model.eval()
-Virus2VecModel=joblib.load(r"models\RF_Virus2vec.pkl")
-
+Virus2Vec_model=joblib.load(r"models\RF_Virus2vec.pkl")
 checkpoint_path=r"models\checkpoint_epoch_38.pt"
 checkpoint = torch.load(checkpoint_path, map_location=device)
 generator = Generator(vocab_size).to(device)
@@ -70,6 +68,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 @app.post("/predict-host-ML")
 async def predict_host_ML(file: Optional[UploadFile] = File(None),
     virus: Optional[str] = Form(None)):
@@ -84,11 +83,12 @@ async def predict_host_ML(file: Optional[UploadFile] = File(None),
     Virus2Vec_feature_vector = Virus2Vec(datas)
 
     #  Make prediction
-    Y_prob = get_predection_per_virus(Virus2VecModel,Virus2Vec_feature_vector)
+    Y_prob = get_predection_per_virus(Virus2Vec_model,Virus2Vec_feature_vector)
     print(f"Y_prob: {Y_prob}")
     return {
         "probability": Y_prob,
     }
+
 @app.post("/predict-host")
 async def predict_host(file: Optional[UploadFile] = File(None),
     virus: Optional[str] = Form(None)):
@@ -108,7 +108,7 @@ async def predict_host(file: Optional[UploadFile] = File(None),
     _, seq_ids = np.unique(seq_ids_original, return_inverse=True)
 
     #  Make prediction
-    Y_prob, Y_hat, A, A_2 = test_one_virus(model,ft_model,datas,ids,seq_ids)
+    Y_prob, Y_hat, A, A_2 = test_one_virus(DL_model,ft_model,datas,ids,seq_ids)
 
     A = [a.cpu().numpy() if isinstance(a, torch.Tensor) and a.is_cuda else a.numpy() if isinstance(a, torch.Tensor) else np.array(a) for a in A]
     A_2 = [a_2.cpu().numpy() if isinstance(a_2, torch.Tensor) and a_2.is_cuda else a_2.numpy() if isinstance(a_2, torch.Tensor) else np.array(a_2) for a_2 in A_2]
@@ -155,8 +155,6 @@ async def top_antivirus(
         "top_smiles": top_smiles,
     }
 
-
-    
 @app.post("/generate-antivirus")
 async def generate_antivirus(
     file: Optional[UploadFile] = File(None),

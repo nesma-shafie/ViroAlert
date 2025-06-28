@@ -22,9 +22,8 @@ def custom_collate(batch):
     protein_graphs = ([item[0] for item in batch])  
     drug_graphs = [item[1] for item in batch]                 
 
-    batch_protein_graphs = Batch.from_data_list(protein_graphs)     # Combine graphs into a single batched graph
-    batch_drug_graphs = Batch.from_data_list(drug_graphs)     # Combine graphs into a single batched graph
-
+    batch_protein_graphs = Batch.from_data_list(protein_graphs)     
+    batch_drug_graphs = Batch.from_data_list(drug_graphs)    
     return batch_protein_graphs, batch_drug_graphs
 
 def protein_graph_to_data(protein_graph):
@@ -90,7 +89,7 @@ class GCNConv(nn.Module):
 
         row, col = edge_index
 
-        # Improved normalization stability
+        # Normalization 
         deg = self.degree(col, num_nodes, dtype=x.dtype)
         deg = torch.clamp(deg, min=1e-12)  # avoid division by zero
         deg_inv_sqrt = deg.pow(-0.5)
@@ -136,7 +135,7 @@ class DrugTargetGNN(nn.Module):
 
         
     def forward(self, protein_graph, drug_graph):
-        # GNN on drug graph
+       
         x, edge_index,edge_attr = drug_graph.x, drug_graph.edge_index,drug_graph.edge_attr
         p, edge_index_p,edge_attr_p = protein_graph.x, protein_graph.edge_index,protein_graph.edge_attr
 

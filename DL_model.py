@@ -66,8 +66,8 @@ class GatedAttention(nn.Module):
             nn.BatchNorm1d(128),
             nn.ReLU(),
             nn.AvgPool1d(kernel_size=2),
-            nn.Flatten(),  # Converts to 1D before fully connected layers
-            nn.Linear(128 * ((self.M) // 4), 256),  # Adjust size based on sequence length
+            nn.Flatten(),  
+            nn.Linear(128 * ((self.M) // 4), 256),  
             nn.ReLU(),
             nn.BatchNorm1d(256),
             nn.Linear(256, 128),
@@ -82,11 +82,11 @@ class GatedAttention(nn.Module):
         A_vec_2_all=[]
         A_vec_all=[]
         #### STEP 1:embeddings
-        datas = datas.float()  # Ensure correct dtype
+        datas = datas.float()  
         instances=self.transformer_encoder(datas) 
         
         #### STEP 2: INSTANCE-LEVEL ATTENTION ####
-        # Apply attention mechanisms per bag (over instances_per_bag)
+        
         A_V = self.attention_V_1(instances)  
         A_U = self.attention_U_1(instances)  
         A = self.attention_w_1(A_V * A_U)
@@ -119,8 +119,7 @@ class GatedAttention(nn.Module):
         
         
         ### STEP 4: CLASSIFICATION ####
-        # output2 = output2.view(output2.shape[0], -1)  # Flatten over bags_per_bag for classification
-        output2 = output2.unsqueeze(1)  # Add a channel dimension
+        output2 = output2.unsqueeze(1)  
 
 
         Y_prob = self.classifier(output2)  # Shape: [batch_size, 1]

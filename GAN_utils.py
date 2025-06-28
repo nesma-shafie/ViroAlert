@@ -46,7 +46,7 @@ def similarity_score(smiles,inhibitors):
     total_max_scores = []
     for smile_fp in smile_fps:
         similarities = DataStructs.BulkTanimotoSimilarity(smile_fp, inhibitor_fps)
-        total_max_scores.append(max(similarities))  # Or use np.mean(similarities) if you want
+        total_max_scores.append(max(similarities))  
     return np.mean(total_max_scores)
 
 def get_top_anti_viruses(virus,model,esm_model,esm_alphabet):
@@ -91,21 +91,18 @@ def train_for_generator_fine_tunnning(generator, inhibitors, char2idx, idx2char,
         for _ in range(g_steps):
             g_optimizer.zero_grad()
 
-            # Sample a molecule from the generator
+            
             generated, _ = generator.sample(char2idx['<SOS>'], max_len,batch_size)
             smiles=np.array([])
             for i in range(generated.size(0)):
                 smile=''.join([idx2char[t] for t in generated[i].tolist() if t !=char2idx['<SOS>'] and t !=char2idx['<EOS>'] and t !=char2idx['<PAD>'] ])
-                # Check and process validity
                 if get_validity_metric(smile):
                     smiles=np.append(smiles,smile )
             
             if len(smiles)>0:
 
-                # Calculate reward
                 validity = len(smiles)/batch_size
                 sim_score = similarity_score(smiles, inhibitors)
-                #try without disc
                 reward = 0.5 * validity  + 0.5 * sim_score
                 loss = -reward
                 print(f"Loss: {loss:.4f}")
@@ -146,7 +143,6 @@ def get_new_antivirus(generator,DTI_model, esm_model, esm_alphabet, new_virus, c
                     drug_graph = drug_graph_to_data(drug_graph).to(device)
                     
                     output = DTI_model(virus_graph, drug_graph)
-                    # print("out",output,"valid",valid)
                     if(output.item()>7):
                         drug_7+=1
                         best_drugs.append((smiles,output.item()))

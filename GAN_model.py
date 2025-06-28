@@ -189,7 +189,7 @@ class Generator(nn.Module):
                 if not active_mask.any():
                     break
 
-            # Compute rewards for the batch
+         
             batch_rewards = self.compute_reward(current_seqs, discriminator)  # [batch_size]
             rewards[:, sample_idx] = batch_rewards
 
@@ -200,10 +200,10 @@ class Generator(nn.Module):
         batch_size = len(sequences)
         rewards = torch.zeros(batch_size, dtype=torch.float32, device=device)
 
-        # Convert sequences to SMILES strings
+
         smiles_list = [''.join([idx2char[t] for t in seq]) for seq in sequences]
 
-        # Compute validity scores
+
         validity_scores = torch.tensor([get_validity_metric(smiles) for smiles in smiles_list], dtype=torch.float32, device=device)
 
         # Pad sequences for discriminator
@@ -212,12 +212,12 @@ class Generator(nn.Module):
         for i, seq in enumerate(sequences):
             seq_tensor[i, :len(seq)] = torch.tensor(seq, dtype=torch.long, device=device)
 
-        # Compute discriminator scores
+   
         with torch.no_grad():
             disc_scores = discriminator(seq_tensor)  # [batch_size, 1]
             disc_scores = torch.sigmoid(disc_scores).squeeze(-1)  # [batch_size]
 
-        # Compute combined rewards
+
         rewards = 0.5 * validity_scores + 0.5 * disc_scores
             
         
@@ -228,15 +228,14 @@ class Generator(nn.Module):
         optimizer.zero_grad()
 
         with autocast():
-            # Generate a batch of sequences
+            
             generated_batch, log_probs_list_batch = self.sample(start_token, max_len, batch_size=batch_size, temperature=temperature)
             loss = torch.tensor(0.0, dtype=torch.float32, requires_grad=True, device=device)
             entropy_loss = 0.0
 
-            # Convert generated batch to list of sequences
+         
             generated_seqs = [generated_batch[i].tolist() for i in range(batch_size)]
 
-            # Accumulate policy gradient loss
             policy_loss = torch.tensor(0.0, dtype=torch.float32, requires_grad=True, device=device)
 
             for t in range(len(log_probs_list_batch)):
@@ -244,10 +243,9 @@ class Generator(nn.Module):
                 partial_seqs = [seq[:t+1] for seq in generated_seqs]
                 q_values = self.monte_carlo_search(discriminator, partial_seqs, max_len, num_mc_samples, temperature)  # [batch_size]
                 
-                # Normalize Q-values to reduce variance
+                # Normalize Q-values 
                 q_values = (q_values - q_values.mean()) / (q_values.std() + 1e-8)
                 
-                # Compute policy gradient loss for this timestep
                 log_probs = log_probs_list_batch[t]  # [batch_size]
                 policy_loss = policy_loss - (log_probs * q_values).mean()  # Accumulate loss
 
@@ -257,7 +255,6 @@ class Generator(nn.Module):
                 entropy_loss = entropy_loss + entropy
 
             if len(log_probs_list_batch) > 0:
-                # Combine policy loss and entropy loss
                 loss = (policy_loss + 0.1 * entropy_loss) / len(log_probs_list_batch)
 
         scaler.scale(loss).backward()

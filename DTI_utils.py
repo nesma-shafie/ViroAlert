@@ -57,7 +57,7 @@ def smile_graph(smile):
         end = bond.GetEndAtomIdx()
         bond_type = bond.GetBondTypeAsDouble()
 
-        # Since molecular graphs are undirected, add both directions
+        # graphs are undirected, add both directions
         edges.append([start, end])
         edges.append([end, start])
 
@@ -72,7 +72,7 @@ def split_sequence(seq, window_size=1000, stride=500):
     windows = []
     for start in range(0, len(seq), stride):
         end = min(start + window_size, len(seq))
-        if end - start < 2:  # skip too-short fragments
+        if end - start < 2:  
             break
         windows.append((start, seq[start:end]))
         if end == len(seq):
@@ -94,10 +94,10 @@ def protein_graph(model, alphabet, seq, threshold=0.5, window_size=1000, stride=
     aa_dict = {aa: i for i, aa in enumerate("ACDEFGHIKLMNPQRSTVWY")}
     L = len(seq)
     
-    # Build node features (one-hot encoding for the full sequence)
+    # Node features (one-hot encoding for the full sequence)
     node_features = torch.eye(20)[[aa_dict.get(aa, 0) for aa in seq]]  # [L, 20]
 
-    # Containers for merged edges
+  
     edge_index = []
     edge_attr = []
 

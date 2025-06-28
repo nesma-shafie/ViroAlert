@@ -72,6 +72,7 @@ app.add_middleware(
 @app.post("/predict-host-ML")
 async def predict_host_ML(file: Optional[UploadFile] = File(None),
     virus: Optional[str] = Form(None)):
+    # Case 1: File is uploaded (FASTA)
     if file:
         content = (await file.read()).decode()
         virus = read_virus_seqs(content)
@@ -82,7 +83,6 @@ async def predict_host_ML(file: Optional[UploadFile] = File(None),
     datas = virus["Sequence"]
     Virus2Vec_feature_vector = Virus2Vec(datas)
 
-    #  Make prediction
     Y_prob = get_predection_per_virus(Virus2Vec_model,Virus2Vec_feature_vector)
     print(f"Y_prob: {Y_prob}")
     return {
@@ -107,7 +107,6 @@ async def predict_host(file: Optional[UploadFile] = File(None),
     _, ids = np.unique(ids_original, return_inverse=True)
     _, seq_ids = np.unique(seq_ids_original, return_inverse=True)
 
-    #  Make prediction
     Y_prob, Y_hat, A, A_2 = test_one_virus(DL_model,ft_model,datas,ids,seq_ids)
 
     A = [a.cpu().numpy() if isinstance(a, torch.Tensor) and a.is_cuda else a.numpy() if isinstance(a, torch.Tensor) else np.array(a) for a in A]

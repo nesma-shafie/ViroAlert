@@ -73,11 +73,38 @@ https://github.com/user-attachments/assets/ea0b2668-a3e1-43de-abdd-e5c35944d9ed
 ---
 
 ## Project Team  
-Developed by:  
-- Nesma AbdEl-Kader Shafie  
-- Sara Gamal Gerges  
-- Eman Ibrahim Elbedwihy  
-- Yousef Osama Mohamed  
+<!-- readme: collaborators -start -->
+<table  align='center'> 
+<tr>
+    <td align="center">
+        <a href="https://github.com/yousefosama654">
+            <img src="https://avatars.githubusercontent.com/u/93356614?v=4" width="100;" alt="yousefosama654"/>
+            <br />
+            <sub><b>Yousef</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/EmanElbedwihy">
+            <img src="https://avatars.githubusercontent.com/u/120182209?v=4" width="100;" alt="EmanElbedwihy"/>
+            <br />
+            <sub><b>Eman</b></sub>
+        </a>
+    </td>
+        <td align="center">
+        <a href="https://github.com/nesma-shafie">
+            <img src="https://avatars.githubusercontent.com/u/120175134?v=4" width="100;" alt="nesma-shafie"/>
+            <br />
+            <sub><b>Nesma</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/Sara-Gamal12">
+            <img src="https://avatars.githubusercontent.com/u/106556638?v=4" width="100;" alt="Sara-Gamal12"/>
+            <br />
+            <sub><b>Sara</b></sub>
+        </a>
+    </td></tr>
+</table>
+<!-- readme: collaborators -end -->
+<h2 align='center'>Thank You. 💖 </h2>
 
-Supervised by **Dr. Abd El Moniem Bayoumi**  
-Virology Expert: **Dr. Ebrahim Hassan**  

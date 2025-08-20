@@ -59,7 +59,16 @@ The system enables:
 ---
 
 ## Demo  
-<img width="3000" height="1649" alt="image" src="https://github.com/user-attachments/assets/8a0cbe00-d753-48b8-8b9f-e63d5309b0c8" />
+
+
+
+
+
+
+
+https://github.com/user-attachments/assets/ea0b2668-a3e1-43de-abdd-e5c35944d9ed
+
+
 
 ---
 

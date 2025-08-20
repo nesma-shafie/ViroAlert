@@ -1,0 +1,9 @@
+N=193   #number of tokens per sequence
+SG_EMBEDD_SIZE=30
+SG_WINDOW=5
+N_HEAD = 5         # Number of attention heads
+ENCODER_N_LAYERS = 2       # Number of transformer layers
+EMBEDDING_SIZE=SG_EMBEDD_SIZE
+INTERMIDIATE_DIM=512
+BATCH_SIZE=32
+l_sub = 9   # length of sub-sequence
